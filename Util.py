@@ -1,3 +1,6 @@
+#!/usr/bin/python3
+# -*- coding: utf-8 -*-
+
 # Contain  utility function such as exponentation or pgcd
 
 import random

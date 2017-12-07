@@ -1,4 +1,7 @@
-from Functions import *
+#!/usr/bin/python3
+# -*- coding: utf-8 -*-
+
+from ThreeFish import *
 
 def show():
     print("\nArnaud FOURNIER, Aurélien DIAS\n")
