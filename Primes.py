@@ -1,6 +1,3 @@
-#!/usr/bin/python3
-# -*- coding: utf-8 -*-
-
 """module primes contenant les nombres premiers de 3 à 500"""
 
 

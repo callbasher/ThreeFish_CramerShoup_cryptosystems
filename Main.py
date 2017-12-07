@@ -1,8 +1,5 @@
-#!/usr/bin/python3
-# -*- coding: utf-8 -*-
-
 from Menu import *
-from Cramer_Shoup import *
+import Cramer_Shoup
 import binascii
 
 def main():
@@ -20,6 +17,8 @@ if __name__ == "__main__":
         #print("La taille du fichier est : ", len(data))
         #print(binascii.hexlify(data))
         #fich.close()
+
+        print(Cramer_Shoup.safe_prime(1000))
 
         main()
         x = 'z'
