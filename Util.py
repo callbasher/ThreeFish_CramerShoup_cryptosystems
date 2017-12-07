@@ -61,7 +61,7 @@ def rabin_millerv2(n, t = 7):
         x = pow(a, r, n)
         if x == 1:
             return isPrime
-        for i in xrange(s-1):
+        for i in range(s-1):
             if x == n - 1:
                 return isPrime
             x = pow(x, 2, n)
@@ -73,7 +73,7 @@ def rabin_millerv2(n, t = 7):
         s = s + 1
         r = r >> 1
 
-    for i in xrange(t):
+    for i in range(t):
         a = randrange(2, n-1)
         if not check(a, s, r, n):
             return not isPrime
@@ -84,11 +84,12 @@ def rabin_millerv2(n, t = 7):
 
 def readfile(fichier):
     fich = open(fichier, "rb")          # Lecture du fichier en mode binaire (rb = readbinary)
-    data = fich.read()
-    lenFichier = len(data)              # Calcul de la longueur du fichier en octets
-    binasc = binascii.hexlify(data)     # return the hexadecimal representation of the binary data...
-                                        # ...Tous les octets de données sont converties en 2 digits hexa
-    fich.close()
-    return binasc
+    fich = fich.read()                  # C:\Users\aurélien\Google Drive
+    longueurfich = len(fich)
+    print("longueur totale du fichier : ", longueurfich)  # print la taille du fichier
+    with open(fichier, 'rb') as rfile:  # ouverture du fichier
+        rfile.seek(0)  # début lecture de fichier au début
+        data = bytearray(rfile.read(8))  # 64 bits de data stocké dans la var data
+    return data
 
 # Fin lecture fichier a chiffrer

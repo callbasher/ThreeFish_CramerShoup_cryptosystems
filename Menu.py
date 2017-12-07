@@ -5,13 +5,6 @@ from ThreeFish import *
 from Cramer_Shoup import *
 
 def show():
-
-    # test lecture fichier en mode binaire
-    #print(safe_prime(1000))
-    #fichier = readfile("C:/Users/aurélien/Google Drive/DGSE.txt")
-    #print("\n\tAffichage du fichier\n", fichier)
-    # Fin test
-
     print("\nArnaud FOURNIER, Aurélien DIAS\n")
     print("\t\t\tProjet GS15 - A17 - ThreeFish - CramerShoup")
     print("\nMenu :\n")
@@ -28,8 +21,9 @@ def show():
 def apply(x):
     if x < 4:
         if x == 1:
-            #fich = input("Veuillez entrer le chemin du fichier à chiffrer : ")
-            #fichier = readfile(fich)
+            fich = input("Veuillez entrer le chemin du fichier à chiffrer : ")
+            fichier = readfile(fich)            # C:\Users\aurélien\Google Drive
+            print(fichier)
 
 
             print("Veuillez choisir votre mode de chiffrement : \n\t1. ECB\n\t2. CBC")
