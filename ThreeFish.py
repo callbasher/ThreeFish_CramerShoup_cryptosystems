@@ -97,15 +97,3 @@ def keygenturn(key):
     return VingtKeys         # var VingKeys est la var ou se trouve les 20 cles des tournées
 
 # Fin génération des clés
-
-# Début lecture fichier a chiffrer
-
-def readfile(fichier):
-    fich = open(fichier, "r")
-    lecture = fich.read()
-
-# Fin lecture fichier a chiffrer
-
-# Début écriture fichier
-
-# Fin écriture fichier
