@@ -50,7 +50,7 @@ def probable_prime(k, B = 1000):
             n = random.getrandbits(k) | 1
             divisible = trial_division(n, B)
 
-        if rabin_miller(n):
+        if rabin_millerv2(n):
                 success = True
 
     return n
@@ -63,7 +63,7 @@ def safe_prime(k):
         for r in range(1, 1000):
             p = 2*r*q + 1
             if not trial_division(p):
-                success = rabin_miller(p)
+                success = rabin_millerv2(p)
                 break
 
     return p
@@ -87,7 +87,6 @@ def Maurer_primeGen(k):
             r = 2**(s-1)
 
     q, R, n = Maurer_primeGen(int(r * k) + 1)
-    print(k, q, R , n)
     p = math.pow(2, k-1)
     Q = q << 1
     I = int(p / Q)
@@ -96,15 +95,16 @@ def Maurer_primeGen(k):
     while not success:
         J = I+1
         K = I << 1
-        R = random.randrange(J, K)
+        R = J
+        if K-J > 0:
+            R = random.randrange(J, K)
         n = Q*R + 1
         div = trial_division(n, B)
-        print(div)
         if not div:
             a = random.randrange(2, n - 2)
-            b = powermod(a, n-1, n)
+            b = pow(a, n-1, n)
             if b == 1:
-                b = powermod(a, R << 1, n)
+                b = pow(a, R << 1, n)
                 d = pgcd(b-1, n)
                 success = d == 1
 

@@ -3,7 +3,6 @@
 
 from ThreeFish import *
 from Cramer_Shoup import *
-from Util import *
 
 def show():
 
