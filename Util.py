@@ -5,6 +5,7 @@
 
 import random
 import sys
+import binascii
 
 def pgcd(a, b):
     # calcul recursif du pgcd de a et b
@@ -47,3 +48,16 @@ def rabin_miller(n, b = 7):
             if i:
                return False
       return True
+
+# Début lecture fichier a chiffrer
+
+def readfile(fichier):
+    fich = open(fichier, "rb")          # Lecture du fichier en mode binaire (rb = readbinary)
+    data = fich.read()
+    lenFichier = len(data)              # Calcul de la longueur du fichier en octets
+    binasc = binascii.hexlify(data)     # return the hexadecimal representation of the binary data...
+                                        # ...Tous les octets de données sont converties en 2 digits hexa
+    fich.close()
+    return binasc
+
+# Fin lecture fichier a chiffrer

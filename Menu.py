@@ -2,8 +2,17 @@
 # -*- coding: utf-8 -*-
 
 from ThreeFish import *
+from Cramer_Shoup import *
+from Util import *
 
 def show():
+
+    # test lecture fichier en mode binaire
+    #print(safe_prime(1000))
+    #fichier = readfile("C:/Users/aurélien/Google Drive/DGSE.txt")
+    #print("\n\tAffichage du fichier\n", fichier)
+    # Fin test
+
     print("\nArnaud FOURNIER, Aurélien DIAS\n")
     print("\t\t\tProjet GS15 - A17 - ThreeFish - CramerShoup")
     print("\nMenu :\n")
