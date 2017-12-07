@@ -2,8 +2,10 @@
 # -*- coding: utf-8 -*-
 
 from ThreeFish import *
+from Cramer_Shoup import *
 
 def show():
+
     print("\nArnaud FOURNIER, Aurélien DIAS\n")
     print("\t\t\tProjet GS15 - A17 - ThreeFish - CramerShoup")
     print("\nMenu :\n")
