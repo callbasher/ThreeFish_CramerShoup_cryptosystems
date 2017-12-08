@@ -5,6 +5,16 @@ from ThreeFish import *
 from Cramer_Shoup import *
 
 def show():
+    # test lecture fichier
+    L_block = 256
+    fich = "C:/Users/aurélien/Google Drive/DGSE.txt"
+    fichier = readfile(fich, L_block)
+    print(fichier)
+    key = keygen(L_block)
+    tabKey = keygenturn(key)
+    # test lecture fichier
+
+
     print("\nArnaud FOURNIER, Aurélien DIAS\n")
     print("\t\t\tProjet GS15 - A17 - ThreeFish - CramerShoup")
     print("\nMenu :\n")
@@ -21,9 +31,7 @@ def show():
 def apply(x):
     if x < 4:
         if x == 1:
-            fich = input("Veuillez entrer le chemin du fichier à chiffrer : ")
-            fichier = readfile(fich)            # C:\Users\aurélien\Google Drive
-            print(fichier)
+
 
 
             print("Veuillez choisir votre mode de chiffrement : \n\t1. ECB\n\t2. CBC")
@@ -37,9 +45,14 @@ def apply(x):
             while (L_block != 256) and (L_block != 512) and (L_block != 1024):
                 L_block = int(input("Choisir la taille de bloc à utiliser pour le chiffrement (256/512/1024) : "))
 
-
             key = keygen(L_block)
             tabKey = keygenturn(key)
+
+            fich = input("Veuillez entrer le chemin du fichier à chiffrer : ") # C:/Users/aurélien/Google Drive/DGSE.txt
+            fichier = readfile(fich, L_block)
+            print(fichier)
+
+
 
         if x == 2:
             print("Well Done !")

@@ -94,6 +94,7 @@ def keygenturn(key):
        tabKey.append(k)                                     # k est le dernier mot de 64 bits kn = k0+..+kn-1+C
 
        VingtKeys.append(tabKey)
+    print(VingtKeys)
     return VingtKeys         # var VingKeys est la var ou se trouve les 20 cles des tournées
 
 # Fin génération des clés

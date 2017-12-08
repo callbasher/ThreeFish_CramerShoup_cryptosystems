@@ -5,6 +5,8 @@
 
 from random import randrange, getrandbits, sample
 import sys
+import os
+import struct
 import binascii
 
 def pgcd(a, b):
@@ -81,15 +83,32 @@ def rabin_millerv2(n, t = 7):
     return isPrime
 
 # Début lecture fichier a chiffrer
+# but de la fonction est de lire L_Block du fichier et de les chiffrer puis d'écrire dans un nouveau fichier
 
-def readfile(fichier):
-    fich = open(fichier, "rb")          # Lecture du fichier en mode binaire (rb = readbinary)
-    fich = fich.read()                  # C:\Users\aurélien\Google Drive
-    longueurfich = len(fich)
-    print("longueur totale du fichier : ", longueurfich)  # print la taille du fichier
-    with open(fichier, 'rb') as rfile:  # ouverture du fichier
-        rfile.seek(0)  # début lecture de fichier au début
-        data = bytearray(rfile.read(8))  # 64 bits de data stocké dans la var data
+
+def readfile(fichier, L_block):                  # C:/Users/aurélien/Google Drive/DGSE.txt
+    pad = "0"
+    stat = os.stat(fichier)
+    tailleFich = stat.st_size           # taille du fichier en octets
+    print("taille fichier : ", tailleFich)  # affichage de la taille du fichier
+
+    L_block_bytes = int(L_block / 8)         # conversion de L_block en octets
+    print("taille du block en octets : ", L_block_bytes)
+
+    for i in range(0, tailleFich, L_block_bytes):
+        with open(fichier, 'rb') as rfile:  # ouverture du fichier
+            rfile.seek(i)  # début lecture de fichier au début
+            data = bytearray(rfile.read(L_block_bytes))  # L_block bits de data stocké dans la var data
+
+            if len(data) != L_block_bytes:                  # Condition pour le dernier block, réalisation de padding right !!!
+                print("do padding !!!!")
+                data = data.ljust(L_block_bytes, b'0')         # rjust pour right padding
+
+            print("longueur données : ", len(data), "octets, donnée = ", data)     # affichage de la longueur des données
+
+            conversion = list(data)             # conversion du bytearray en list ou chaque éléments est représenté par 2 octets
+            print(conversion)
+
     return data
 
 # Fin lecture fichier a chiffrer
