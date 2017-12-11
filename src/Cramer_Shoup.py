@@ -1,11 +1,10 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
-import sys
 import math
 import random
-import Primes
-from Util import *
+from src.Primes import *
+from src.Util import *
 
 # Cette fonction teste si un nombre possède des facteurs premiers allant jusqu'à 500.
 # C'est une manière rapide de vérifier si un nombre n'est pas premier pour la génération de grands nombres premiers.
@@ -16,7 +15,7 @@ def trial_division(n, B = 1000):
         return False
 
     isDivisible = False
-    primes = Primes.primes()
+    primes = get100kPrimes()
     for p in primes:
         if p > B:
             break
@@ -33,7 +32,7 @@ def fermat_test(n, k):
     isPrime = True
     for i in range(0, k):
         a = random.randint(2, n-2)
-        x = powermod(a, n-1, n)
+        x = pow(a, n-1, n)
         if x != 1:
             isPrime = False
             break
@@ -50,7 +49,7 @@ def probable_prime(k, B = 1000):
             n = random.getrandbits(k) | 1
             divisible = trial_division(n, B)
 
-        if rabin_millerv2(n):
+        if rabin_miller(n):
                 success = True
 
     return n
@@ -63,7 +62,7 @@ def safe_prime(k):
         for r in range(1, 1000):
             p = 2*r*q + 1
             if not trial_division(p):
-                success = rabin_millerv2(p)
+                success = rabin_miller(p)
                 break
 
     return p
@@ -72,7 +71,7 @@ def safe_prime(k):
 def Maurer_primeGen(k):
 
     if k<17:
-        primes = Primes.primes()
+        primes = get100kPrimes()
         x = random.randrange(0, len(primes))
         return primes[x], 0, 0
 
