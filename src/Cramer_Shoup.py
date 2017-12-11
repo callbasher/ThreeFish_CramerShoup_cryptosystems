@@ -6,16 +6,17 @@ import random
 from src.Primes import *
 from src.Util import *
 
+primes = get100kPrimes()
+
 # Cette fonction teste si un nombre possède des facteurs premiers allant jusqu'à 500.
 # C'est une manière rapide de vérifier si un nombre n'est pas premier pour la génération de grands nombres premiers.
-def trial_division(n, B = 1000):
-    if (n == 1):
+def trial_division(n, B=1000):
+    if n == 1:
         return True
-    if(n == 2):
+    if n == 2:
         return False
 
     isDivisible = False
-    primes = get100kPrimes()
     for p in primes:
         if p > B:
             break
@@ -24,6 +25,7 @@ def trial_division(n, B = 1000):
             break
 
     return isDivisible
+
 
 # Test de primalité de Fermat, utilisé dans la génération de nombres premiers très grands
 def fermat_test(n, k):
@@ -39,7 +41,8 @@ def fermat_test(n, k):
 
     return isPrime
 
-def probable_prime(k, B = 1000):
+
+def probable_prime(k, B=1000):
     success = False
     n = 0
     while not success:
@@ -51,27 +54,27 @@ def probable_prime(k, B = 1000):
 
         if rabin_miller(n):
                 success = True
-
     return n
+
 
 def safe_prime(k):
     success = False
+    r, q = 0, 0
     while not success:
-        q = probable_prime(k-1)
+        q = probable_prime(k - 1)
         # We try to find p = 2 * R * q + 1 1000 times and if it fails we change q
         for r in range(1, 1000):
-            p = 2*r*q + 1
-            if not trial_division(p):
-                success = rabin_miller(p)
+            p = 2 * r * q + 1
+            if (not trial_division(p)) and rabin_miller(p):
+                success = True
                 break
+    return p, q, r
 
-    return p
 
 # Experimental
 def Maurer_primeGen(k):
 
     if k<17:
-        primes = get100kPrimes()
         x = random.randrange(0, len(primes))
         return primes[x], 0, 0
 
@@ -115,10 +118,25 @@ def find_generator(p, q):
     while b == 1:
         x = random.randint(2, p)
         for i in range(0, 1):
-            b = powermod(x, factors[i], p)
+            b = pow(x, factors[i], p)
             if b != 1:
                 break
     return b
 
 def prime_and_generators(k):
-    return 0
+    p, q, r = safe_prime(k)
+    # prime factors of p-1
+    # we want only the different prime factors not their exponent so we remove duplicates
+    # We put q at the end of the list to ensure that smaller factors are tried first
+    # in "find_generator" function
+    factors = set(factorize(r))
+    factors.add(2)
+    factors = list(factors)
+    factors.append(q)
+
+    alpha1 = find_generator(p, factors)
+    alpha2 = alpha1
+    while alpha1 == alpha2:
+        alpha2 = find_generator(p, factors)
+
+    return p, alpha1, alpha2

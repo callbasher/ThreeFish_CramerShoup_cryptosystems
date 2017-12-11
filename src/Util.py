@@ -3,11 +3,9 @@
 
 # Contain  utility function such as exponentation or pgcd
 
-from random import randrange, getrandbits, sample
-import sys
+from random import randrange
 import os
-import struct
-import binascii
+
 
 def pgcd(a, b):
     # calcul recursif du pgcd de a et b
@@ -18,14 +16,20 @@ def pgcd(a, b):
         return pgcd(b, r)
 
 
-def powermod(a, exp, mod):
-    resultat = 1
-    while exp > 0:
-        if exp % 2 == 1:
-            resultat = (resultat * a) % mod
-        exp >>= 1
-        a = (a * a) % mod
-    return resultat
+def factorize(n):
+    factors = []
+    i = 2
+    while i <= n / i:
+        while n % i == 0:
+            factors.append(i)
+            n /= i
+        i += 1
+
+    if n > 1:
+        factors.append(n)
+
+    return factors
+
 
 # Test de primalité de Rabin-Miller, utilisé dans la génération de nombres premiers très grands
 def rabin_miller(n, t = 7):
@@ -88,5 +92,3 @@ def readfile(fichier, L_block):
             print(conversion)
 
     return data
-
-# Fin lecture fichier a chiffrer
