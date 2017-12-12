@@ -1,6 +1,9 @@
 import pytest
 import binascii
-from src.Util import *
+import os
+import sys
+sys.path.append('/home/dev/Documents/Projet_Cryptologie/src')
+from Util import *
 
 # test lecture fichier
 def read_txt_file():

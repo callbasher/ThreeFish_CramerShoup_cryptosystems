@@ -26,22 +26,6 @@ def trial_division(n, B=1000):
 
     return isDivisible
 
-
-# Test de primalité de Fermat, utilisé dans la génération de nombres premiers très grands
-def fermat_test(n, k):
-    if(n == 2):
-        return True
-    isPrime = True
-    for i in range(0, k):
-        a = random.randint(2, n-2)
-        x = pow(a, n-1, n)
-        if x != 1:
-            isPrime = False
-            break
-
-    return isPrime
-
-
 def probable_prime(k, B=1000):
     success = False
     n = 0
@@ -68,11 +52,12 @@ def safe_prime(k):
             if (not trial_division(p)) and rabin_miller(p):
                 success = True
                 break
+
     return p, q, r
 
 
 # Experimental
-def Maurer_primeGen(k):
+def maurer_primeGen(k):
 
     if k<17:
         x = random.randrange(0, len(primes))
@@ -88,7 +73,7 @@ def Maurer_primeGen(k):
             s = random.randrange(0, 1000) / 1000
             r = 2**(s-1)
 
-    q, R, n = Maurer_primeGen(int(r * k) + 1)
+    q, R, n = maurer_primeGen(int(r * k) + 1)
     p = math.pow(2, k-1)
     Q = q << 1
     I = int(p / Q)
@@ -112,13 +97,12 @@ def Maurer_primeGen(k):
 
     return q, R, n
 
-def find_generator(p, q):
-    factors = [2, q]
+def find_generator(p, factors):
     b = 1
     while b == 1:
         x = random.randint(2, p)
-        for i in range(0, 1):
-            b = pow(x, factors[i], p)
+        for f in factors:
+            b = pow(x, (p-1) / f, p)
             if b != 1:
                 break
     return b
