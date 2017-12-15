@@ -91,6 +91,5 @@ def keygenturn(key):
        tabKey.append(k)
 
        VingtKeys.append(tabKey)
-    print(VingtKeys)
     return VingtKeys
 # Fin génération des clés

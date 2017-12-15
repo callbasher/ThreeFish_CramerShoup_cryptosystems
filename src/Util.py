@@ -70,7 +70,6 @@ def int2hexa(n):
     return hexk
 
 def readfile(fichier, L_block):
-    pad = "0"
     # information sur la taille du fichier
     stat = os.stat(fichier)
     tailleFich = stat.st_size
@@ -78,7 +77,11 @@ def readfile(fichier, L_block):
     L_block_bytes = int(L_block / 8)
     # nbr de blocks sans padding
     nbrblocknopad = int(tailleFich / L_block_bytes)
+<<<<<<< HEAD
     # taille dernier block
+=======
+    # taille du dernier block
+>>>>>>> Threefish
     lastblock = tailleFich - (L_block_bytes * nbrblocknopad)
     # list avec la valeur des int du fichier
     datalist = []
@@ -88,12 +91,18 @@ def readfile(fichier, L_block):
             rfile.seek(i)
             # L_block bits de data stocké dans la var data
             data = rfile.read(L_block_bytes)
+            print(data)
             data = int.from_bytes(data, byteorder='little')
             datalist.append(data)
 
+    # padding
     if lastblock != 0:
         with open(fichier, 'rb') as rfile:
+<<<<<<< HEAD
             rfile.seek(nbrblocknopad * L_block_bytes)
+=======
+            rfile.seek(L_block_bytes * nbrblocknopad)
+>>>>>>> Threefish
             data = rfile.read(tailleFich - lastblock)
             data = data.rjust(L_block_bytes, b'0')
             print(data)

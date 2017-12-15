@@ -35,7 +35,7 @@ def apply(x):
             key = keygen(L_block)
             tabKey = keygenturn(key)
 
-            fich = input("Veuillez entrer le chemin du fichier à chiffrer : ") # C:/Users/aurélien/Google Drive/DGSE.txt
+            fich = input("Veuillez entrer le chemin du fichier à chiffrer : ")
             fichier = readfile(fich, L_block)
             print(fichier)
 
