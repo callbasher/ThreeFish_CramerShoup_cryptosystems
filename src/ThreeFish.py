@@ -93,3 +93,18 @@ def keygenturn(key):
        VingtKeys.append(tabKey)
     return VingtKeys
 # Fin génération des clés
+
+# début fonction mélange
+def mixcolumn(m1 , m2, L_block):
+    # en fonction de la taille du block on execute 2, 4 ou 8 fois le mélange
+    for i in range(0, (L_block / 128)):
+        m11 = (m1 ^ m2) % 2**64
+        m22 = m11 ^ (m2 << R)
+    return m11, m22
+# Fin de la fonction mélange
+
+# début fonction de permutation
+def permute(n):
+    # invertion de l'ordre des mots
+    return list(reversed(n))
+# fin fonction de permutation
