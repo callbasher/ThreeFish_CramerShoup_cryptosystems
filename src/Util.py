@@ -62,33 +62,46 @@ def rabin_miller(n, t = 7):
 
     return isPrime
 
-# Début lecture fichier a chiffrer
-# but de la fonction est de lire L_Block du fichier et de les chiffrer puis d'écrire dans un nouveau fichier
+def int2hexa(n):
+    hexk = hex(n)
+    hexk = hexk.replace('\'', '')
+    hexk = hexk.replace('0x', '', 1)
+    hexk = str(hexk)
+    return hexk
+
 def readfile(fichier, L_block):
     pad = "0"
+    # information sur la taille du fichier
     stat = os.stat(fichier)
     tailleFich = stat.st_size
-    print("taille fichier : ", tailleFich)
-
     # conversion de L_block en octets
     L_block_bytes = int(L_block / 8)
-    print("taille du block en octets : ", L_block_bytes)
+    # nbr de blocks sans padding
+    nbrblocknopad = int(tailleFich / L_block_bytes)
+    # curseur dernier block
+    lastblock = tailleFich - (L_block_bytes * nbrblocknopad)
+    # list avec la valeur des int du fichier
+    datalist = []
 
-    for i in range(0, tailleFich, L_block_bytes):
+    for i in range(0, tailleFich - lastblock, L_block_bytes):
         with open(fichier, 'rb') as rfile:
             rfile.seek(i)
             # L_block bits de data stocké dans la var data
-            data = bytearray(rfile.read(L_block_bytes))
+            data = rfile.read(L_block_bytes)
+            data = int.from_bytes(data, byteorder='little')
+            datalist.append(data)
 
-            # réalisation de padding si necessaire
-            if len(data) != L_block_bytes:
-                print("do padding !!!!")
-                data = data.ljust(L_block_bytes, b'0')
+    if lastblock != 0:
+        with open(fichier, 'rb') as rfile:
+            rfile.seek(tailleFich - lastblock)
+            data = rfile.read(L_block_bytes)
+            data = data.rjust(L_block_bytes, b'0')
+            data = int.from_bytes(L_block_bytes, byteorder='little')
+            datalist.append(data)
 
-            print("longueur données : ", len(data), "octets, donnée = ", data)
+    return datalist
 
-            # conversion du bytearray en list ou chaque éléments est représenté par 2 octets
-            conversion = list(data)
-            print(conversion)
 
-    return data
+def writefile(fichier, data):
+    with open(fichier, 'w') as wfile:
+        wfile.write(data)
