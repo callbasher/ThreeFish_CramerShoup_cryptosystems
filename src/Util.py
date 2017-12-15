@@ -78,7 +78,7 @@ def readfile(fichier, L_block):
     L_block_bytes = int(L_block / 8)
     # nbr de blocks sans padding
     nbrblocknopad = int(tailleFich / L_block_bytes)
-    # curseur dernier block
+    # taille dernier block
     lastblock = tailleFich - (L_block_bytes * nbrblocknopad)
     # list avec la valeur des int du fichier
     datalist = []
@@ -93,10 +93,11 @@ def readfile(fichier, L_block):
 
     if lastblock != 0:
         with open(fichier, 'rb') as rfile:
-            rfile.seek(tailleFich - lastblock)
-            data = rfile.read(L_block_bytes)
+            rfile.seek(nbrblocknopad * L_block_bytes)
+            data = rfile.read(tailleFich - lastblock)
             data = data.rjust(L_block_bytes, b'0')
-            data = int.from_bytes(L_block_bytes, byteorder='little')
+            print(data)
+            data = int.from_bytes(data, byteorder='little')
             datalist.append(data)
 
     return datalist

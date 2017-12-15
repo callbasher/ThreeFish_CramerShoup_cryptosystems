@@ -7,8 +7,6 @@ from src.Util import *
 
 
 def show():
-    ll = 1024
-    kk = keygen(ll)
     print("\nArnaud FOURNIER, Aurélien DIAS\n")
     print("\t\t\tProjet GS15 - A17 - ThreeFish - CramerShoup")
     print("\nMenu :\n")
