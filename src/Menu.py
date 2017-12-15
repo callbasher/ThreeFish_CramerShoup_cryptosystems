@@ -7,8 +7,6 @@ from src.Util import *
 
 
 def show():
-    ll = 1024
-    kk = keygen(ll)
     print("\nArnaud FOURNIER, Aurélien DIAS\n")
     print("\t\t\tProjet GS15 - A17 - ThreeFish - CramerShoup")
     print("\nMenu :\n")
@@ -37,7 +35,7 @@ def apply(x):
             key = keygen(L_block)
             tabKey = keygenturn(key)
 
-            fich = input("Veuillez entrer le chemin du fichier à chiffrer : ") # C:/Users/aurélien/Google Drive/DGSE.txt
+            fich = input("Veuillez entrer le chemin du fichier à chiffrer : ")
             fichier = readfile(fich, L_block)
             print(fichier)
 
