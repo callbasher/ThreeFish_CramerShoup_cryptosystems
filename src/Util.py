@@ -77,12 +77,7 @@ def readfile(fichier, L_block):
     L_block_bytes = int(L_block / 8)
     # nbr de blocks sans padding
     nbrblocknopad = int(tailleFich / L_block_bytes)
-<<<<<<< HEAD
-    # taille dernier block
-=======
     # taille du dernier block
->>>>>>> Threefish
-    lastblock = tailleFich - (L_block_bytes * nbrblocknopad)
     # list avec la valeur des int du fichier
     datalist = []
 
