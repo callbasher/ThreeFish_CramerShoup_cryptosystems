@@ -3,10 +3,12 @@
 
 # Contain  utility function such as exponentation or pgcd or read/write functions
 
-from random import randrange
+from random import SystemRandom, getrandbits
 import os
-import random
-import fnmatch
+from src.Primes import *
+
+
+primes = get100kPrimes()
 
 def pgcd(a, b):
     # calcul recursif du pgcd de a et b
@@ -29,6 +31,25 @@ def factorize(n):
         factors.append(n)
 
     return factors
+
+# Cette fonction teste si un nombre possède des facteurs premiers allant jusqu'à 500.
+# C'est une manière rapide de vérifier si un nombre n'est pas premier pour la génération de grands nombres premiers.
+def trial_division(n, B=1000):
+    if n == 1:
+        return True
+    if n == 2:
+        return False
+
+    isDivisible = False
+    for p in primes:
+        if p > B:
+            break
+        if n % p == 0 and n != p:
+            isDivisible = True
+            break
+
+    return isDivisible
+
 
 # Test de primalité de Rabin-Miller, utilisé dans la génération de nombres premiers très grands
 def rabin_miller(n, t = 7):
@@ -55,7 +76,7 @@ def rabin_miller(n, t = 7):
         r = r >> 1
 
     for i in range(t):
-        a = randrange(2, n-1)
+        a = SystemRandom.choice(2, n-1)
         if not check(a, s, r, n):
             return not isPrime
 
@@ -68,6 +89,38 @@ def int2hexa(n):
     hexk = str(hexk)
     return hexk
 
+
+def probable_prime(k, B=1000):
+    success = False
+    n = 0
+    while not success:
+        divisible = True
+        while divisible:
+            # generate a k-bit random odd number
+            n = SystemRandom.getrandbits(k) | 1
+            divisible = trial_division(n, B)
+
+        if rabin_miller(n):
+                success = True
+    return n
+
+
+def safe_prime(k):
+    success = False
+    r, q = 0, 0
+    while not success:
+        q = probable_prime(k - 1)
+        # We try to find p = 2 * R * q + 1 1000 times and if it fails we change q
+        for r in range(1, 1000):
+            p = 2 * r * q + 1
+            if (not trial_division(p)) and rabin_miller(p):
+                success = True
+                break
+
+    return p, q, r
+
+# Début lecture fichier a chiffrer
+# but de la fonction est de lire L_Block du fichier et de les chiffrer puis d'écrire dans un nouveau fichier
 def readfile(fichier, L_block, do_padding):
     # information sur la taille du fichier
     stat = os.stat(fichier)
@@ -125,8 +178,8 @@ def ajout_padding(datalistorder, Length_chif_bloc):
         # ajout d'une liste de N(4, 8, 16) - 1 mot random de 64bits
         new_last_list = []
         for i in range(0, int(Length_chif_bloc / 64) - 1):
-            new_last_list.append(random.getrandbits(64))
-        pad_info = random.getrandbits(56)
+            new_last_list.append(getrandbits(64))
+        pad_info = getrandbits(56)
         # Si 4, 8 ou 16 mots on été ajoutés
         nbr_pad = int(Length_chif_bloc / 64)
         # convertion en byte du randint de 56 bits
@@ -140,7 +193,7 @@ def ajout_padding(datalistorder, Length_chif_bloc):
     else:
         # S'il ne faut ajouter q'un seul mot d'information a la dernière liste
         if len(last_list) + 1 == int(Length_chif_bloc / 64):
-            nbr_rand = random.getrandbits(56)
+            nbr_rand = getrandbits(56)
             pad_info = nbr_rand.to_bytes(7, byteorder='little', signed=False)
             pad_info = pad_info + bytes([1])
             pad_info = int.from_bytes(pad_info, byteorder='little', signed=False)
@@ -149,8 +202,8 @@ def ajout_padding(datalistorder, Length_chif_bloc):
         else:
             lenght_last_list = int(Length_chif_bloc / 64) - len(last_list)
             for i in range(0, (int(Length_chif_bloc / 64) - len(last_list)) - 1):
-                last_list.append(random.getrandbits(64))
-            nbr_rand = random.getrandbits(56)
+                last_list.append(getrandbits(64))
+            nbr_rand = getrandbits(56)
             pad_info = nbr_rand.to_bytes(7, byteorder='little', signed=False)
             pad_info = pad_info + bytes([lenght_last_list])
             pad_info = int.from_bytes(pad_info, byteorder='little', signed=False)
@@ -199,6 +252,7 @@ def remove_padding_data(data, L_bloc):
         data_pad_list.append(new_data)
     return data, data_pad_nbr
 
+# Takes a bytearray as input and write it in a file
 def writefile(fichier, data):
     with open(fichier, 'w') as wfile:
         wfile.write(data)
