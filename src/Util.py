@@ -69,7 +69,7 @@ def int2hexa(n):
     hexk = str(hexk)
     return hexk
 
-def readfile(fichier, L_block):
+def readfile(fichier, L_block, Lchifblock):
     # information sur la taille du fichier
     stat = os.stat(fichier)
     tailleFich = stat.st_size
@@ -87,7 +87,6 @@ def readfile(fichier, L_block):
             rfile.seek(i)
             # L_block bits de data stocké dans la var data
             data = rfile.read(L_block_bytes)
-            print(data)
             data = int.from_bytes(data, byteorder='little')
             datalist.append(data)
 
@@ -97,13 +96,25 @@ def readfile(fichier, L_block):
             rfile.seek(L_block_bytes * nbrblocknopad)
             data = rfile.read(tailleFich - lastblock)
             data = data.rjust(L_block_bytes, b'0')
-            print(data)
             data = int.from_bytes(data, byteorder='little')
             datalist.append(data)
 
-    return datalist
+    # permet de mettre les données dans un tableau de list de n mots de 64bits
+    l = int(Lchifblock / 64)
+    datalistorder = []
+    for i in range(0, len(datalist), l):
+        datalistorder.append(datalist[i:(i + l)])
+
+    return datalistorder
 
 
 def writefile(fichier, data):
     with open(fichier, 'w') as wfile:
         wfile.write(data)
+
+def writefilelist(fichier, data):
+    with open(fichier, 'wb') as wfile:
+        for i in data:
+            for j in i:
+                j = j.to_bytes(64, byteorder='little')
+                wfile.write(j)
