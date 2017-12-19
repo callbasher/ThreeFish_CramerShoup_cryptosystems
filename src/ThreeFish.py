@@ -125,24 +125,61 @@ def ajoutkey(i_block, i_tabkey):
     return datalistajoutkey
 # fin fonction xor de la clé et du block qui est en train d'être chiffré
 
+# début fonction inverse ajoutkey
+def inv_ajoutkey(i_block, i_tabkey):
+    datalistinv_ajoutkey = []
+    for i in range(0, len(i_block)):
+        datalistinv_ajoutkey.append((i_block[i] - i_tabkey[i]) % 2 ** 64)
+    return datalistinv_ajoutkey
+# fin fonction inverse ajoutkey
+
 # chiffrement ECB début
 def ECBchiffThreef(datalist, tabkeys):
     encryptdatalist = []
+    i = 1
     for j in datalist:
-        for i in range(0, 76):
+        while i <= 76:
+        #for i in range(0, 76):
             # pour ajouter les clés toutes les 4 tournées
-            for r in range(0, 77, 4):
-                if i == r:
+            #for r in range(0, 76, 4):
+                #if i == r:
                     # ajout de la clé
-                    datalist_ajoutkey = ajoutkey(j, tabkeys[int(i/4)])
-                    mixage = mixcolumn(datalist_ajoutkey)
-                    permutation = permute(mixage)
-                    j = permutation
+                    #datalist_ajoutkey = ajoutkey(j, tabkeys[int(i/4)])
+                    #mixage = mixcolumn(datalist_ajoutkey)
+                    #permutation = permute(mixage)
+                    #j = permutation
             mixage = mixcolumn(j)
             permutation = permute(mixage)
             j = permutation
+            i += 1
+        encryptdatalist.append(j)
         # ajout de la dernière clé à la dernière tournée
-        datalist_ajoutfinalkey = ajoutkey(j, tabkeys[19])
-        encryptdatalist.append(datalist_ajoutfinalkey)
+        #datalist_ajoutfinalkey = ajoutkey(j, tabkeys[19])
+        #encryptdatalist.append(datalist_ajoutfinalkey)
     return encryptdatalist
 # chiffrement ECB fin
+
+# déchiffrement ECB début
+def ECBdechiffThreef(datalist, tabkeys):
+    decryptdatalist = []
+    i = 1
+    for j in datalist:
+        while i <= 76:
+            # pour soustraire les clés toutes les 4 tournées
+            #for r in range(0, 76, 4):
+                #if i == r:
+                    # ajout de la clé
+                    #datalist_inv_ajoutkey = inv_ajoutkey(j, tabkeys[int(i / 4)])
+                    #permutation = permute(datalist_inv_ajoutkey)
+                    #mixage = inv_mixcolumn(permutation)
+                    #j = mixage
+            permutation = permute(j)
+            mixage = inv_mixcolumn(permutation)
+            j = mixage
+            i += 1
+        decryptdatalist.append(j)
+        # soutraction de la dernière clé à la dernière tournée
+        #datalist_inv_ajoutfinalkey = inv_ajoutkey(j, tabkeys[19])
+        #decryptdatalist.append(datalist_inv_ajoutfinalkey)
+    return decryptdatalist
+# déchiffrement ECB fin
