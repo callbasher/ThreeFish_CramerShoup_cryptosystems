@@ -3,13 +3,7 @@ This is a test file This is a test file This is a test file
 This is a test file This is a test file This is a test file
 This is a test file This is a test file This is a test file
 This is a test file This is a test file This is a test file
-<<<<<<< HEAD
-This is the last line.
-=======
 This is a test file This is a test file This is a test file
+Toto is a test file This is a test file This is a test file
 This is a test file This is a test file This is a test file
-<<<<<<< HEAD
->>>>>>> Threefish
-=======
 This is a test file
->>>>>>> fonction inv_mix, ECB and tested on pytest done

@@ -121,3 +121,45 @@ def writefilelist(fichier, data):
             for j in i:
                 j = j.to_bytes(64, byteorder='little')
                 wfile.write(j)
+
+
+
+
+
+
+
+
+
+
+
+def read_encryptedfile(fichier, L_block, Lchifblock):
+    # information sur la taille du fichier
+    stat = os.stat(fichier)
+    tailleFich = stat.st_size
+    # conversion de L_block en octets
+    L_block_bytes = int(L_block / 8)
+    # nbr de blocks sans padding
+    nbrblocknopad = int(tailleFich / L_block_bytes)
+    # taille du dernier block
+    lastblock = tailleFich - (L_block_bytes * nbrblocknopad)
+    # list avec la valeur des int du fichier
+    datalist = []
+
+    for i in range(0, tailleFich - lastblock, L_block_bytes):
+        with open(fichier, 'rb') as rfile:
+            rfile.seek(i)
+            # L_block bits de data stocké dans la var data
+            data = rfile.read(L_block_bytes)
+            data = int.from_bytes(data, byteorder='little')
+            if data == 0:
+                i += 1
+            else:
+                datalist.append(data)
+
+    # permet de mettre les données dans un tableau de list de n mots de 64bits
+    l = int(Lchifblock / 64)
+    datalistorder = []
+    for i in range(0, len(datalist), l):
+        datalistorder.append(datalist[i:(i + l)])
+
+    return datalistorder
