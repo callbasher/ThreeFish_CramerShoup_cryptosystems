@@ -78,6 +78,7 @@ def readfile(fichier, L_block, Lchifblock):
     # nbr de blocks sans padding
     nbrblocknopad = int(tailleFich / L_block_bytes)
     # taille du dernier block
+    lastblock =  int(L_block_bytes * nbrblocknopad)
     # list avec la valeur des int du fichier
     datalist = []
 
@@ -95,11 +96,7 @@ def readfile(fichier, L_block, Lchifblock):
     # padding
     if lastblock != 0:
         with open(fichier, 'rb') as rfile:
-<<<<<<< HEAD
-            rfile.seek(nbrblocknopad * L_block_bytes)
-=======
             rfile.seek(L_block_bytes * nbrblocknopad)
->>>>>>> Threefish
             data = rfile.read(tailleFich - lastblock)
             data = data.rjust(L_block_bytes, b'0')
             data = int.from_bytes(data, byteorder='little')
