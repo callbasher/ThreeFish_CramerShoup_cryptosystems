@@ -88,7 +88,10 @@ def readfile(fichier, L_block, Lchifblock):
             # L_block bits de data stocké dans la var data
             data = rfile.read(L_block_bytes)
             data = int.from_bytes(data, byteorder='little')
-            datalist.append(data)
+            if data == 0:
+                i += 1
+            else:
+                datalist.append(data)
 
     # padding
     if lastblock != 0:
@@ -116,47 +119,33 @@ def writefilelist(fichier, data):
     with open(fichier, 'wb') as wfile:
         for i in data:
             for j in i:
-                j = j.to_bytes(64, byteorder='little')
+                j = j.to_bytes(len(str(j)), byteorder='little', signed=False)
                 wfile.write(j)
 
+def readkey(fichier):
+    with open(fichier, 'r') as rfile:
+        data = rfile.read()
+        return data
 
+# fonction de conversion int2bytearray
+def intToByteArray(to_convert):
+    output = []
+    output1 = []
+    intByte = 8
+    mask = 0xFF
 
+    for i in range(0, intByte):
+        output.insert(0, to_convert & mask)
+        to_convert >>= 8
 
+    for i in output:
+        i = bin(i)[2:].zfill(8)
+        output1.append(i)
 
+    return output1
 
-
-
-
-
-
-def read_encryptedfile(fichier, L_block, Lchifblock):
-    # information sur la taille du fichier
-    stat = os.stat(fichier)
-    tailleFich = stat.st_size
-    # conversion de L_block en octets
-    L_block_bytes = int(L_block / 8)
-    # nbr de blocks sans padding
-    nbrblocknopad = int(tailleFich / L_block_bytes)
-    # taille du dernier block
-    lastblock = tailleFich - (L_block_bytes * nbrblocknopad)
-    # list avec la valeur des int du fichier
-    datalist = []
-
-    for i in range(0, tailleFich - lastblock, L_block_bytes):
-        with open(fichier, 'rb') as rfile:
-            rfile.seek(i)
-            # L_block bits de data stocké dans la var data
-            data = rfile.read(L_block_bytes)
-            data = int.from_bytes(data, byteorder='little')
-            if data == 0:
-                i += 1
-            else:
-                datalist.append(data)
-
-    # permet de mettre les données dans un tableau de list de n mots de 64bits
-    l = int(Lchifblock / 64)
-    datalistorder = []
-    for i in range(0, len(datalist), l):
-        datalistorder.append(datalist[i:(i + l)])
-
-    return datalistorder
+# fonction de conversion de bytearray2int
+def bytearrayToInt(to_convert):
+    convert = "".join(to_convert)
+    convert = int(convert, 2)
+    return convert

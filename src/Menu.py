@@ -7,26 +7,6 @@ from src.Util import *
 
 
 def show():
-
-
-    bloc = 256
-    lon = 64
-    a = readfile("../test/resources/test.txt", lon, bloc)
-    print("datafile = ", a)
-    key = keygen(bloc)
-    kk = keygenturn(key)
-    print("20clés = ", kk)
-    chiff = ECBchiffThreef(a, kk)
-    print("dataECB = ", chiff)
-    writefilelist("../test/resources/encrypt.txt", chiff)
-    b = read_encryptedfile("../test/resources/encrypt.txt", lon, bloc)
-    print("datafilelecture = ", b)
-    dchiff = ECBdechiffThreef(b, kk)
-    print("dataECBdchiff = ", dchiff)
-    writefilelist("../test/resources/encrypt.txt", dchiff)
-
-
-
     print("\nArnaud FOURNIER, Aurélien DIAS\n")
     print("\t\t\tProjet GS15 - A17 - ThreeFish - CramerShoup")
     print("\nMenu :\n")
@@ -71,4 +51,4 @@ def apply(x):
         print("Well Done !")
 
     elif x == 6:
-        print("Well Done !")
+        print
