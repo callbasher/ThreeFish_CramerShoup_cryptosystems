@@ -158,3 +158,19 @@ def ECBdechiffThreef(datalist, tabkeys):
         decryptdatalist.append(j)
     return decryptdatalist
 # déchiffrement ECB fin
+
+# fonction rotation circulaire droite d'une chaine de 64bits
+def ROTD(Barray):
+    Barray = str(Barray)
+    # la longueur de Barray dois être de 64
+    longBarray = len(Barray)
+    ROTDBarray = Barray[(longBarray - R):longBarray] + Barray[0:(longBarray - R)]
+    return ROTDBarray
+
+# rotation circulaire gauche d'une chaine de 64bits
+def ROTG(Barray):
+    Barray = str(Barray)
+    # la longueur de Barray dois être de 64
+    longBarray = len(Barray)
+    ROTGBarray = Barray[R:longBarray] + Barray[0:R]
+    return ROTGBarray

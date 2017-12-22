@@ -1,14 +1,9 @@
 import pytest
 import os
 import sys
-<<<<<<< HEAD
-sys.path.append('/home/dev/Documents/Projet_Cryptologie/src')
-=======
+#sys.path.append('/home/dev/Documents/Projet_Cryptologie/src')
 from random import *
-
 sys.path.append('C:/Users/aurélien/Google Drive/Cours UTT/STIC_3_SSI/CS_GS15_Chiffrement, signature électronique et PKI/Projet/Projet_Cryptologie/src')
-
->>>>>>> fonction inv_mix, ECB and tested on pytest done
 from src.Util import *
 from src.ThreeFish import *
 
@@ -62,3 +57,11 @@ def test_inv_ECB():
     a = ECBchiffThreef(liste1, liste2keys)
     b = ECBdechiffThreef(a, liste2keys)
     assert liste1 == b
+
+def test_ROTD_ROTG():
+    a = 1101111101011110011001001110111011001111000101101011100110000010
+    for i in range(76):
+        b = ROTD(a)
+    for i in range(76):
+        c = ROTG(b)
+    assert str(a) == c
