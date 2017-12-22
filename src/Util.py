@@ -130,7 +130,7 @@ def readkey(fichier):
 # fonction de conversion int2bytearray
 def intToByteArray(to_convert):
     output = []
-    output1 = []
+    result = []
     intByte = 8
     mask = 0xFF
 
@@ -138,14 +138,33 @@ def intToByteArray(to_convert):
         output.insert(0, to_convert & mask)
         to_convert >>= 8
 
-    for i in output:
+    for i in result:
         i = bin(i)[2:].zfill(8)
-        output1.append(i)
-
-    return output1
+        result.append(i)
+    result = "".join(result)
+    return result
 
 # fonction de conversion de bytearray2int
 def bytearrayToInt(to_convert):
-    convert = "".join(to_convert)
-    convert = int(convert, 2)
-    return convert
+    return (int(to_convert, 2))
+
+def xor_function(Barray0, Barray1):
+    result = str(bin(int(Barray0) ^ int(Barray1)))
+    result = result.replace('0b', '', 1)
+    if len(result) != 64:
+        result = "0" * (64 - len(result)) + result
+    return result
+
+def additionMod(Barray0, Barray1):
+    result = str(bin(int(Barray0, 2) + int(Barray1, 2)))
+    result = result.replace('0b', '', 1)
+    if len(result) > 64:
+        result = result[1:]
+    return result
+
+def soustracMod(Barray0, Barray1):
+    result = str(bin((int(Barray0, 2) - int(Barray1, 2)) % 2**64))
+    result = result.replace('0b', '', 1)
+    if len(result) < 64:
+        result = "0" * (64 - len(result)) + result
+    return result
