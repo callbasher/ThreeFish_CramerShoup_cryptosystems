@@ -100,7 +100,6 @@ def mixcolumn(datalist):
 
         m22 = xor_function(intToByteArray(m11), intToByteArray(Rotation))
         m22 = strToInt(m22)
-
         datalistmix.append(m11)
         datalistmix.append(m22)
     return datalistmix

@@ -4,6 +4,7 @@ import sys
 #sys.path.append('/home/dev/Documents/Projet_Cryptologie/src')
 from random import *
 sys.path.append('C:/Users/aurélien/Google Drive/Cours UTT/STIC_3_SSI/CS_GS15_Chiffrement, signature électronique et PKI/Projet/Projet_Cryptologie/src')
+from random import *
 from src.Util import *
 from src.ThreeFish import *
 

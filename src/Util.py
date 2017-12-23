@@ -88,7 +88,10 @@ def readfile(fichier, L_block, Lchifblock):
             # L_block bits de data stocké dans la var data
             data = rfile.read(L_block_bytes)
             data = int.from_bytes(data, byteorder='little')
-            datalist.append(data)
+            if data == 0:
+                i += 1
+            else:
+                datalist.append(data)
 
     # padding
     if lastblock != 0:
@@ -165,3 +168,9 @@ def soustracMod(Barray0, Barray1):
     if len(result) < 64:
         result = "0" * (64 - len(result)) + result
     return result
+
+# fonction de conversion de bytearray2int
+def bytearrayToInt(to_convert):
+    convert = "".join(to_convert)
+    convert = int(convert, 2)
+    return convert
