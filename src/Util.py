@@ -82,16 +82,13 @@ def readfile(fichier, L_block, Lchifblock):
     # list avec la valeur des int du fichier
     datalist = []
 
-    for i in range(0, tailleFich - lastblock, L_block_bytes):
+    for i in range(0, (tailleFich - (tailleFich - lastblock)), L_block_bytes):
         with open(fichier, 'rb') as rfile:
             rfile.seek(i)
             # L_block bits de data stocké dans la var data
             data = rfile.read(L_block_bytes)
             data = int.from_bytes(data, byteorder='little')
-            if data == 0:
-                i += 1
-            else:
-                datalist.append(data)
+            datalist.append(data)
 
     # padding
     if lastblock != 0:
@@ -129,6 +126,7 @@ def readkey(fichier):
 
 # fonction de conversion int2bytearray
 def intToByteArray(to_convert):
+    to_convert = int(to_convert)
     output = []
     result = []
     intByte = 8
@@ -138,28 +136,27 @@ def intToByteArray(to_convert):
         output.insert(0, to_convert & mask)
         to_convert >>= 8
 
-    for i in result:
+    for i in output:
         i = bin(i)[2:].zfill(8)
         result.append(i)
     result = "".join(result)
+    result = str(result)
     return result
 
 # fonction de conversion de bytearray2int
-def bytearrayToInt(to_convert):
+def strToInt(to_convert):
     return (int(to_convert, 2))
 
 def xor_function(Barray0, Barray1):
-    result = str(bin(int(Barray0) ^ int(Barray1)))
+    result = str(bin(int(Barray0, 2) ^ int(Barray1, 2)))
     result = result.replace('0b', '', 1)
-    if len(result) != 64:
+    if len(result) < 64:
         result = "0" * (64 - len(result)) + result
     return result
 
 def additionMod(Barray0, Barray1):
-    result = str(bin(int(Barray0, 2) + int(Barray1, 2)))
+    result = str(bin((int(Barray0, 2) + int(Barray1, 2)) % 2**64))
     result = result.replace('0b', '', 1)
-    if len(result) > 64:
-        result = result[1:]
     return result
 
 def soustracMod(Barray0, Barray1):

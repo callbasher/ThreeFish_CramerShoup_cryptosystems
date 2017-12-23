@@ -92,14 +92,15 @@ def keygenturn(key):
 def mixcolumn(datalist):
     # en fonction de la taille du block on execute 2, 4 ou 8 fois le mélange
     datalistmix = []
-    # convertion en bytearray
-    Barray = []
-    for i in datalist:
-        Barray.append(intToByteArray(i))
-
     for i in range(0, len(datalist) - 1, 2):
-        m11 = (datalist[i] + datalist[i+1]) % 2**64
-        m22 = m11 ^ (datalist[i + 1] << R)
+        m11 = additionMod(intToByteArray(datalist[i]), intToByteArray(datalist[i + 1]))
+        m11 = strToInt(m11)
+
+        Rotation = ROTD(intToByteArray(datalist[(i + 1)]))
+
+        m22 = xor_function(intToByteArray(m11), intToByteArray(Rotation))
+        m22 = strToInt(m22)
+
         datalistmix.append(m11)
         datalistmix.append(m22)
     return datalistmix
@@ -110,8 +111,10 @@ def inv_mixcolumn(datalist):
     # en fonction de la taille du block on execute 2, 4 ou 8 fois le mélange
     datalist_unmix = []
     for i in range(0, len(datalist) - 1, 2):
-        m2 = (datalist[i] ^ datalist[i + 1]) >> R
-        m1 = (datalist[i] - m2) % 2**64
+        varXor = xor_function(intToByteArray(datalist[i]), intToByteArray(datalist[(i + 1)]))
+        m2 = ROTG(varXor)
+        m1 = soustracMod(intToByteArray(datalist[i]), intToByteArray(m2))
+        m1 = strToInt(m1)
         datalist_unmix.append(m1)
         datalist_unmix.append(m2)
     return datalist_unmix
@@ -141,36 +144,58 @@ def inv_ajoutkey(i_block, i_tabkey):
 
 # chiffrement ECB début
 def ECBchiffThreef(datalist, tabkeys):
+    listaddkey = [0, 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64, 68, 72, 76]
     encryptdatalist = []
     for j in datalist:
-        j = mixcolumn(j)
-        j = permute(j)
+        # faire une fonction xor 2 lists
+        # j = xor_2lists(j, tabkeys[0])
+        for i in range(76):
+            if i in listaddkey:
+                # j = xor_2lists(j, tabkeys[int((i / 4) + 1)])
+                j = mixcolumn(j)
+                j = permute(j)
+            else:
+                j = mixcolumn(j)
+                j = permute(j)
         encryptdatalist.append(j)
     return encryptdatalist
 # chiffrement ECB fin
 
 # déchiffrement ECB début
 def ECBdechiffThreef(datalist, tabkeys):
+    listaddkey = [0, 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64, 68, 72, 76]
     decryptdatalist = []
     for j in datalist:
-        j = permute(j)
-        j = inv_mixcolumn(j)
+        # faire une fonction xor 2 lists
+        # j = xor_2lists(j, tabkeys[0])
+        for i in range(76):
+            if i in listaddkey:
+                # j = xor_2lists(j, tabkeys[int((i / 4) + 1)])
+                j = permute(j)
+                j = inv_mixcolumn(j)
+            else:
+                j = permute(j)
+                j = inv_mixcolumn(j)
         decryptdatalist.append(j)
     return decryptdatalist
 # déchiffrement ECB fin
 
 # fonction rotation circulaire droite d'une chaine de 64bits
+# require an str value
 def ROTD(Barray):
-    Barray = str(Barray)
     # la longueur de Barray dois être de 64
     longBarray = len(Barray)
     ROTDBarray = Barray[(longBarray - R):longBarray] + Barray[0:(longBarray - R)]
+    ROTDBarray = strToInt(ROTDBarray)
+    # return an int value
     return ROTDBarray
 
 # rotation circulaire gauche d'une chaine de 64bits
+# require an str value
 def ROTG(Barray):
-    Barray = str(Barray)
     # la longueur de Barray dois être de 64
     longBarray = len(Barray)
     ROTGBarray = Barray[R:longBarray] + Barray[0:R]
+    ROTGBarray = strToInt(ROTGBarray)
+    # return an int value
     return ROTGBarray
