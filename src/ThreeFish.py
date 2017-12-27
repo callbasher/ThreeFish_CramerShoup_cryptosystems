@@ -146,11 +146,10 @@ def ECBchiffThreef(datalist, tabkeys):
     listaddkey = [0, 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64, 68, 72, 76]
     encryptdatalist = []
     for j in datalist:
-        # faire une fonction xor 2 lists
-        # j = xor_2lists(j, tabkeys[0])
+        j = addition_modulaire_listes(j, tabkeys[0])
         for i in range(76):
             if i in listaddkey:
-                # j = xor_2lists(j, tabkeys[int((i / 4) + 1)])
+                #j = addition_modulaire_listes(j, tabkeys[int((i / 4) + 1)])
                 j = mixcolumn(j)
                 j = permute(j)
             else:
@@ -165,16 +164,17 @@ def ECBdechiffThreef(datalist, tabkeys):
     listaddkey = [0, 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64, 68, 72, 76]
     decryptdatalist = []
     for j in datalist:
-        # faire une fonction xor 2 lists
-        # j = xor_2lists(j, tabkeys[0])
+        #p = 19
         for i in range(76):
             if i in listaddkey:
-                # j = xor_2lists(j, tabkeys[int((i / 4) + 1)])
                 j = permute(j)
                 j = inv_mixcolumn(j)
+                #j = soustraction_modulaire_listes(j, tabkeys[p])
+                #p -= 1
             else:
                 j = permute(j)
                 j = inv_mixcolumn(j)
+        j = soustraction_modulaire_listes(j, tabkeys[0])
         decryptdatalist.append(j)
     return decryptdatalist
 # déchiffrement ECB fin

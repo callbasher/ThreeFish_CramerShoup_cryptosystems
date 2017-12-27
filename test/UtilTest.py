@@ -104,3 +104,10 @@ def test_int2byte():
     p = "".join(output1)
     p = str(p)
     assert p == intToByteArray(b)
+
+def test_add_sousmod_lists_function():
+    a = [6869182828364843105, 504406031241281733, 13443418139622781366, 7205845119028422470, 12526293637438746525, 7899733889798193142]
+    b = [1037445522762043639, 13279378345007056343, 16830406321885571747, 10170404488671153641, 1503817406107936002, 7582739860938477919]
+    d = addition_modulaire_listes(a, b)
+    e = soustraction_modulaire_listes(d, b)
+    assert e == a
