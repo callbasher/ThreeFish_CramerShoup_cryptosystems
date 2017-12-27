@@ -125,59 +125,53 @@ def permute(n):
     return list(reversed(n))
 # fin fonction de permutation
 
-# début fonction xor de la clé et du block qui est en train d'être chiffré
-def ajoutkey(i_block, i_tabkey):
-    datalistajoutkey = []
-    for i in range(0, len(i_block)):
-        datalistajoutkey.append((i_block[i] + i_tabkey[i]) % 2**64)
-    return datalistajoutkey
-# fin fonction xor de la clé et du block qui est en train d'être chiffré
-
-# début fonction inverse ajoutkey
-def inv_ajoutkey(i_block, i_tabkey):
-    datalistinv_ajoutkey = []
-    for i in range(0, len(i_block)):
-        datalistinv_ajoutkey.append((i_block[i] - i_tabkey[i]) % 2 ** 64)
-    return datalistinv_ajoutkey
-# fin fonction inverse ajoutkey
-
-# chiffrement ECB début
-def ECBchiffThreef(datalist, tabkeys):
-    listaddkey = [0, 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64, 68, 72, 76]
-    encryptdatalist = []
+def ECB_threefish_cipher(datalist, tabkeys):
+    encryp_list = []
     for j in datalist:
-        j = addition_modulaire_listes(j, tabkeys[0])
-        for i in range(76):
-            if i in listaddkey:
-                #j = addition_modulaire_listes(j, tabkeys[int((i / 4) + 1)])
+        for k in range(0, 20):
+            j = addition_modulaire_listes(j, tabkeys[k])
+            for i in range(4):
                 j = mixcolumn(j)
                 j = permute(j)
-            else:
+        encryp_list.append(j)
+    return encryp_list
+
+def ECB_threefish_decipher(datalist, tabkeys):
+    decrypt_list = []
+    for j in datalist:
+        counter = 19
+        for k in range(0, 20):
+            for i in range(4):
+                j = permute(j)
+                j = inv_mixcolumn(j)
+            j = soustraction_modulaire_listes(j, tabkeys[counter])
+            counter -= 1
+        decrypt_list.append(j)
+    return decrypt_list
+
+def CBC_threefish_cipher(datalist, tabkeys, L_bloc):
+    encryp_list = []
+    for j in datalist:
+        for k in range(0, 20):
+            j = addition_modulaire_listes(j, tabkeys[k])
+            for i in range(4):
                 j = mixcolumn(j)
                 j = permute(j)
-        encryptdatalist.append(j)
-    return encryptdatalist
-# chiffrement ECB fin
+        encryp_list.append(j)
+    return encryp_list
 
-# déchiffrement ECB début
-def ECBdechiffThreef(datalist, tabkeys):
-    listaddkey = [0, 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64, 68, 72, 76]
-    decryptdatalist = []
+def CBC_threefish_decipher(datalist, tabkeys, L_bloc):
+    decrypt_list = []
     for j in datalist:
-        #p = 19
-        for i in range(76):
-            if i in listaddkey:
+        counter = 19
+        for k in range(0, 20):
+            for i in range(4):
                 j = permute(j)
                 j = inv_mixcolumn(j)
-                #j = soustraction_modulaire_listes(j, tabkeys[p])
-                #p -= 1
-            else:
-                j = permute(j)
-                j = inv_mixcolumn(j)
-        j = soustraction_modulaire_listes(j, tabkeys[0])
-        decryptdatalist.append(j)
-    return decryptdatalist
-# déchiffrement ECB fin
+            j = soustraction_modulaire_listes(j, tabkeys[counter])
+            counter -= 1
+        decrypt_list.append(j)
+    return decrypt_list
 
 # fonction rotation circulaire droite d'une chaine de 64bits
 # require an str value
@@ -198,3 +192,10 @@ def ROTG(Barray):
     ROTGBarray = strToInt(ROTGBarray)
     # return an int value
     return ROTGBarray
+
+# génération d'un IV pour le chiffrement CBC
+def IV_function(L_bloc):
+    IV = []
+    for i in range(0, int(L_bloc / 64)):
+        IV.append(random.getrandbits(64))
+    return IV
