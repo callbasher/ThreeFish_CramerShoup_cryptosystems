@@ -16,9 +16,9 @@ tweak2 = tweak0 ^ tweak1
 tweaks = [tweak0, tweak1, tweak2]
 # soit 0x1bd11bdaa9fc1a22 en hexa C = constante pour la génération des clés des tournées
 C = 513129967392069919254
-
+# todo : créer un fichier pour écrire la clé symétrique
 # Création / génération de la clé symétrique
-def keygen(L_block):
+def keygen(L_block, fichier):
     key = []
     hexkey = []
     k = 0
@@ -55,7 +55,7 @@ def keygenturn(key):
     k = 0
     for i in range(0, 20):
        tabKey = []
-       for n in range(0, (N - 4)):
+       for n in range(0, (N - 3)):
           t = key[(i + n) % (N + 1)]
           tabKey.append(t)
           k ^= t
@@ -128,19 +128,21 @@ def permute(n):
 def ECB_threefish_cipher(datalist, tabkeys):
     encryp_list = []
     for j in datalist:
-        for k in range(0, 20):
+        for k in range(0, 19):
             j = addition_modulaire_listes(j, tabkeys[k])
             for i in range(4):
                 j = mixcolumn(j)
                 j = permute(j)
+        j = addition_modulaire_listes(j, tabkeys[19])
         encryp_list.append(j)
     return encryp_list
 
 def ECB_threefish_decipher(datalist, tabkeys):
     decrypt_list = []
     for j in datalist:
-        counter = 19
-        for k in range(0, 20):
+        counter = 18
+        j = soustraction_modulaire_listes(j, tabkeys[19])
+        for k in range(0, 19):
             for i in range(4):
                 j = permute(j)
                 j = inv_mixcolumn(j)
@@ -152,19 +154,21 @@ def ECB_threefish_decipher(datalist, tabkeys):
 def CBC_threefish_cipher(datalist, tabkeys, L_bloc):
     encryp_list = []
     for j in datalist:
-        for k in range(0, 20):
+        for k in range(0, 19):
             j = addition_modulaire_listes(j, tabkeys[k])
             for i in range(4):
                 j = mixcolumn(j)
                 j = permute(j)
+        j = addition_modulaire_listes(j, tabkeys[19])
         encryp_list.append(j)
     return encryp_list
 
 def CBC_threefish_decipher(datalist, tabkeys, L_bloc):
     decrypt_list = []
     for j in datalist:
-        counter = 19
-        for k in range(0, 20):
+        counter = 18
+        j = soustraction_modulaire_listes(j, tabkeys[19])
+        for k in range(0, 19):
             for i in range(4):
                 j = permute(j)
                 j = inv_mixcolumn(j)

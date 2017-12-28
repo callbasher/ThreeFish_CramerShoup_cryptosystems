@@ -32,15 +32,51 @@ def apply(x):
             while (L_block != 256) and (L_block != 512) and (L_block != 1024):
                 L_block = int(input("Choisir la taille de bloc à utiliser pour le chiffrement (256/512/1024) : "))
 
-            key = keygen(L_block)
+            fichier = input("Veuillez entrer le chemin d'un fichier qui va être chiffré : ")
+            lect_fichier = readfile(fichier, L_block, 1)
+
+            key = keygen(L_block, fichier)
             tabKey = keygenturn(key)
 
-            fich = input("Veuillez entrer le chemin du fichier à chiffrer : ")
-            fichier = readfile(fich, L_block)
-            print(fichier)
+            padding_fichier = ajout_padding(lect_fichier, L_block)
+
+            if ModeChif == 1:
+                chiff = ECB_threefish_cipher(padding_fichier, tabKey)
+            else:
+                chiff = CBC_threefish_cipher(padding_fichier, tabKey)
+
+            writefilelist(fichier, chiff)
+
+            print("Félicitation !! Chiffrement terminé.")
 
         if x == 2:
-            print("Well Done !")
+            print("Veuillez choisir votre mode de déchiffrement : \n\t1. ECB\n\t2. CBC")
+            ModeChif = int(input("Option :"))
+            while ModeChif != 1 and ModeChif != 2:
+                ModeChif = int(input("Veuillez choisir votre mode de déchiffrement : \n\t1. ECB\n\t2. CBC"))
+
+            L_block = int(input("Choisir la taille de bloc à utiliser pour le déchiffrement (256/512/1024) : "))
+            while (L_block != 256) and (L_block != 512) and (L_block != 1024):
+                L_block = int(input("Choisir la taille de bloc à utiliser pour le déchiffrement (256/512/1024) : "))
+
+            fichier = input("Veuillez entrer le chemin d'un fichier qui va être déchiffré : ")
+            lect_fichier = readfile(fichier, L_block, 0)
+
+            # todo : faire une fonction qui va lire la clé sym et généré des clés avec keygenturn
+            key = "ToDo"
+            tabKey = keygenturn(key)
+
+            if ModeChif == 1:
+                dchiff = ECB_threefish_decipher(lect_fichier, tabKey)
+            else:
+                dchiff = CBC_threefish_decipher(lect_fichier, tabKey)
+
+            no_padding_list = remove_padding_list(dchiff)
+            no_padding_data, valeur_pad = remove_padding_data(no_padding_list)
+
+            write_file_list_pad(fichier, no_padding_data, valeur_pad)
+
+            print("Félicitation !! Déchiffrement terminé.")
 
         if x == 3:
             print("Well Done !")
