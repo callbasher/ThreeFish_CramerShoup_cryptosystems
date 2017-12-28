@@ -201,8 +201,12 @@ def write_file_list_pad(fichier, data, val_last_data):
         for i in range(0, len(last_list) - 1):
             wdata = last_list[i].to_bytes(8, byteorder='little', signed=False)
             wfile.write(wdata)
-        wdata = last_list[len(last_list) - 1].to_bytes((8 - val_last_data), byteorder='little', signed=False)
-        wfile.write(wdata)
+        if val_last_data == 8:
+            wdata = last_list[len(last_list) - 1].to_bytes(8, byteorder='little', signed=False)
+            wfile.write(wdata)
+        else:
+            wdata = last_list[len(last_list) - 1].to_bytes((8 - val_last_data), byteorder='little', signed=False)
+            wfile.write(wdata)
 
 def remove_padding_data(data):
     # dernière liste du tableau
