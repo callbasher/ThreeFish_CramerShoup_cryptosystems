@@ -29,33 +29,18 @@ def test_unmix():
     unmix = inv_mixcolumn(mix)
     assert unmix == liste
 
-def test_ajoutkey():
-    liste1 = []
-    liste2 = []
-    for i in range(10):
-        liste1.append(randint(0, 100))
-        liste2.append(randint(0, 100))
-    test1 = []
-    for i in range(0, len(liste1)):
-        test1.append((liste1[i] + liste2[i]) % 2**64)
-    test_ftc = ajoutkey(liste1, liste2)
-    assert test1 == test_ftc
-
-def test_inv_ajoutkey():
-    liste1 = []
-    liste2 = []
-    for i in range(10):
-        liste1.append(randint(0, 100))
-        liste2.append(randint(0, 100))
-    a = ajoutkey(liste1, liste2)
-    b = inv_ajoutkey(a, liste2)
-    assert b == liste1
-
 def test_inv_ECB():
     liste1 = [[18, 24, 52, 96], [65, 98, 98, 751], [652, 64, 894, 64], [64, 654, 65, 651], [6551, 61, 51, 51], [561, 651, 651, 61]]
     liste2keys = [[654, 5, 54, 54], [654, 654, 654, 5], [65, 54, 54, 54], [54, 54, 654, 654], [987, 987, 84, 84], [6884, 684, 654, 64], [18, 24, 52, 96], [65, 98, 98, 751], [652, 64, 894, 64], [64, 654, 65, 651], [6551, 61, 51, 51], [561, 651, 651, 61], [18, 24, 52, 96], [65, 98, 98, 751], [652, 64, 894, 64], [64, 654, 65, 651], [6551, 61, 51, 51], [561, 651, 651, 61], [6551, 61, 51, 51], [561, 651, 651, 61]]
-    a = ECBchiffThreef(liste1, liste2keys)
-    b = ECBdechiffThreef(a, liste2keys)
+    a = ECB_threefish_cipher(liste1, liste2keys)
+    b = ECB_threefish_decipher(a, liste2keys)
+    assert liste1 == b
+
+def test_inv_CBC():
+    liste1 = [[18, 24, 52, 96], [65, 98, 98, 751], [652, 64, 894, 64], [64, 654, 65, 651], [6551, 61, 51, 51], [561, 651, 651, 61]]
+    liste2keys = [[654, 5, 54, 54], [654, 654, 654, 5], [65, 54, 54, 54], [54, 54, 654, 654], [987, 987, 84, 84], [6884, 684, 654, 64], [18, 24, 52, 96], [65, 98, 98, 751], [652, 64, 894, 64], [64, 654, 65, 651], [6551, 61, 51, 51], [561, 651, 651, 61], [18, 24, 52, 96], [65, 98, 98, 751], [652, 64, 894, 64], [64, 654, 65, 651], [6551, 61, 51, 51], [561, 651, 651, 61], [6551, 61, 51, 51], [561, 651, 651, 61]]
+    a = CBC_threefish_cipher(liste1, liste2keys, 256)
+    b = CBC_threefish_decipher(a, liste2keys, 256)
     assert liste1 == b
 
 def test_ROTD_ROTG():
@@ -104,3 +89,12 @@ def test_int2byte():
     p = "".join(output1)
     p = str(p)
     assert p == intToByteArray(b)
+
+def test_xor2list():
+    liste1 = [18, 24, 52, 96]
+    liste2 = [18, 24, 52, 96]
+    result = xor_2_lists(liste1, liste2)
+    m = [0, 0, 0, 0]
+    begin = xor_2_lists(m, liste2)
+    assert m == result
+    assert begin == liste1

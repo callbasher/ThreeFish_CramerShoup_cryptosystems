@@ -16,9 +16,8 @@ tweak2 = tweak0 ^ tweak1
 tweaks = [tweak0, tweak1, tweak2]
 # soit 0x1bd11bdaa9fc1a22 en hexa C = constante pour la génération des clés des tournées
 C = 513129967392069919254
-
 # Création / génération de la clé symétrique
-def keygen(L_block):
+def keygen(L_block, fichier):
     key = []
     hexkey = []
     k = 0
@@ -41,21 +40,15 @@ def keygen(L_block):
             keyuser += i
     k ^= C
     key.append(k)
-    print("Voici votre clé symétrique sur ", L_block, " bits : \t\n######################################\t\n"
-          , keyuser, "\t\n######################################")
-    # écriture de la clé symétrique dans un fichier
-    writefile("../test/resources/symKey.txt", keyuser)
-    return key
-# Fin création / génération de la clé symétrique
+    return key, keyuser
 
-# Génération des 20 clés pour les tournées
 def keygenturn(key):
     N = len(key) - 1
     VingtKeys = []
     k = 0
     for i in range(0, 20):
        tabKey = []
-       for n in range(0, (N - 4)):
+       for n in range(0, (N - 3)):
           t = key[(i + n) % (N + 1)]
           tabKey.append(t)
           k ^= t
@@ -86,9 +79,7 @@ def keygenturn(key):
        tabKey.append(k)
        VingtKeys.append(tabKey)
     return VingtKeys
-# Fin génération des clés
 
-# début fonction mélange
 def mixcolumn(datalist):
     # en fonction de la taille du block on execute 2, 4 ou 8 fois le mélange
     datalistmix = []
@@ -103,9 +94,7 @@ def mixcolumn(datalist):
         datalistmix.append(m11)
         datalistmix.append(m22)
     return datalistmix
-# Fin de la fonction mélange
 
-# début de la fonction inverse de mélange
 def inv_mixcolumn(datalist):
     # en fonction de la taille du block on execute 2, 4 ou 8 fois le mélange
     datalist_unmix = []
@@ -117,84 +106,80 @@ def inv_mixcolumn(datalist):
         datalist_unmix.append(m1)
         datalist_unmix.append(m2)
     return datalist_unmix
-# Fin de la fonction inverse de mélange
 
-# début fonction de permutation
 def permute(n):
     # invertion de l'ordre des mots
     return list(reversed(n))
-# fin fonction de permutation
 
-# début fonction xor de la clé et du block qui est en train d'être chiffré
-def ajoutkey(i_block, i_tabkey):
-    datalistajoutkey = []
-    for i in range(0, len(i_block)):
-        datalistajoutkey.append((i_block[i] + i_tabkey[i]) % 2**64)
-    return datalistajoutkey
-# fin fonction xor de la clé et du block qui est en train d'être chiffré
-
-# début fonction inverse ajoutkey
-def inv_ajoutkey(i_block, i_tabkey):
-    datalistinv_ajoutkey = []
-    for i in range(0, len(i_block)):
-        datalistinv_ajoutkey.append((i_block[i] - i_tabkey[i]) % 2 ** 64)
-    return datalistinv_ajoutkey
-# fin fonction inverse ajoutkey
-
-# chiffrement ECB début
-def ECBchiffThreef(datalist, tabkeys):
-    listaddkey = [0, 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64, 68, 72, 76]
-    encryptdatalist = []
+def ECB_threefish_cipher(datalist, tabkeys):
+    encryp_list = []
     for j in datalist:
-        # faire une fonction xor 2 lists
-        # j = xor_2lists(j, tabkeys[0])
-        for i in range(76):
-            if i in listaddkey:
-                # j = xor_2lists(j, tabkeys[int((i / 4) + 1)])
+        for k in range(0, 19):
+            j = addition_modulaire_listes(j, tabkeys[k])
+            for i in range(4):
                 j = mixcolumn(j)
                 j = permute(j)
-            else:
+        j = addition_modulaire_listes(j, tabkeys[19])
+        encryp_list.append(j)
+    return encryp_list
+
+def ECB_threefish_decipher(datalist, tabkeys):
+    decrypt_list = []
+    for j in datalist:
+        counter = 18
+        j = soustraction_modulaire_listes(j, tabkeys[19])
+        for k in range(0, 19):
+            for i in range(4):
+                j = permute(j)
+                j = inv_mixcolumn(j)
+            j = soustraction_modulaire_listes(j, tabkeys[counter])
+            counter -= 1
+        decrypt_list.append(j)
+    return decrypt_list
+
+# Todo : terminé CBC cipher and decipher function
+def CBC_threefish_cipher(datalist, tabkeys, L_bloc):
+    encryp_list = []
+    for j in datalist:
+        for k in range(0, 19):
+            j = addition_modulaire_listes(j, tabkeys[k])
+            for i in range(4):
                 j = mixcolumn(j)
                 j = permute(j)
-        encryptdatalist.append(j)
-    return encryptdatalist
-# chiffrement ECB fin
+        j = addition_modulaire_listes(j, tabkeys[19])
+        encryp_list.append(j)
+    return encryp_list
 
-# déchiffrement ECB début
-def ECBdechiffThreef(datalist, tabkeys):
-    listaddkey = [0, 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64, 68, 72, 76]
-    decryptdatalist = []
+def CBC_threefish_decipher(datalist, tabkeys, L_bloc):
+    decrypt_list = []
     for j in datalist:
-        # faire une fonction xor 2 lists
-        # j = xor_2lists(j, tabkeys[0])
-        for i in range(76):
-            if i in listaddkey:
-                # j = xor_2lists(j, tabkeys[int((i / 4) + 1)])
+        counter = 18
+        j = soustraction_modulaire_listes(j, tabkeys[19])
+        for k in range(0, 19):
+            for i in range(4):
                 j = permute(j)
                 j = inv_mixcolumn(j)
-            else:
-                j = permute(j)
-                j = inv_mixcolumn(j)
-        decryptdatalist.append(j)
-    return decryptdatalist
-# déchiffrement ECB fin
+            j = soustraction_modulaire_listes(j, tabkeys[counter])
+            counter -= 1
+        decrypt_list.append(j)
+    return decrypt_list
 
-# fonction rotation circulaire droite d'une chaine de 64bits
-# require an str value
 def ROTD(Barray):
-    # la longueur de Barray dois être de 64
     longBarray = len(Barray)
     ROTDBarray = Barray[(longBarray - R):longBarray] + Barray[0:(longBarray - R)]
     ROTDBarray = strToInt(ROTDBarray)
     # return an int value
     return ROTDBarray
 
-# rotation circulaire gauche d'une chaine de 64bits
-# require an str value
 def ROTG(Barray):
-    # la longueur de Barray dois être de 64
     longBarray = len(Barray)
     ROTGBarray = Barray[R:longBarray] + Barray[0:R]
     ROTGBarray = strToInt(ROTGBarray)
     # return an int value
     return ROTGBarray
+
+def IV_function(L_bloc):
+    IV = []
+    for i in range(0, int(L_bloc / 64)):
+        IV.append(random.getrandbits(64))
+    return IV
