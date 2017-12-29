@@ -1,12 +1,122 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
-"""module primes contenant les nombres premiers de 3 à 500"""
+from random import SystemRandom
 
 
-# Primes from 3 to 500
-def get100kPrimes():
-	return [3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97, 101, 103, 107,
+def get_primes():
+    return get_100k_primes()
+
+
+primes = get_primes()
+
+
+def pgcd(a, b):
+    # calcul recursif du pgcd de a et b
+    if b == 0:
+        return a
+    else:
+        r = a % b
+        return pgcd(b, r)
+
+
+def factorize(n):
+    factors = []
+    i = 2
+    while i <= n / i:
+        while n % i == 0:
+            factors.append(i)
+            n /= i
+        i += 1
+
+    if n > 1:
+        factors.append(n)
+    return factors
+
+
+# Cette fonction teste si un nombre possède des facteurs premiers allant jusqu'à 500.
+# C'est une manière rapide de vérifier si un nombre n'est pas premier pour la génération de grands nombres premiers.
+def trial_division(n, B=1000):
+    if n == 1:
+        return True
+    if n == 2:
+        return False
+
+    isDivisible = False
+    for p in primes:
+        if p > B:
+            break
+        if n % p == 0 and n != p:
+            isDivisible = True
+            break
+
+    return isDivisible
+
+
+# Test de primalité de Rabin-Miller, utilisé dans la génération de nombres premiers très grands
+def rabin_miller(n, t = 7):
+    isPrime = True
+    if n < 6:
+        return [not isPrime, not isPrime, isPrime, isPrime, not isPrime, isPrime][n]
+    elif not n & 1:
+        return not isPrime
+
+    def check(a, s, r, n):
+        x = pow(a, r, n)
+        if x == 1:
+            return isPrime
+        for i in range(s-1):
+            if x == n - 1:
+                return isPrime
+            x = pow(x, 2, n)
+        return x == n-1
+
+    # Find s and r such as n - 1 = 2^s * r
+    s, r = 0, n - 1
+    while r & 1:
+        s = s + 1
+        r = r >> 1
+
+    for i in range(t):
+        a = SystemRandom.choice(2, n-1)
+        if not check(a, s, r, n):
+            return not isPrime
+
+    return isPrime
+
+
+def probable_prime(k, B=1000):
+    success = False
+    n = 0
+    while not success:
+        divisible = True
+        while divisible:
+            # generate a k-bit random odd number
+            n = SystemRandom.getrandbits(k) | 1
+            divisible = trial_division(n, B)
+
+        if rabin_miller(n):
+                success = True
+    return n
+
+
+def safe_prime(k):
+    success = False
+    r, q = 0, 0
+    while not success:
+        q = probable_prime(k - 1)
+        # We try to find p = 2 * R * q + 1 1000 times and if it fails we change q
+        for r in range(1, 1000):
+            p = 2 * r * q + 1
+            if (not trial_division(p)) and rabin_miller(p):
+                success = True
+                break
+
+    return p, q, r
+
+
+def get_100k_primes():
+    return [3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97, 101, 103, 107,
 	        109, 113, 127, 131, 137, 139, 149, 151, 157, 163, 167, 173, 179, 181, 191, 193, 197, 199, 211, 223, 227,
 	        229, 233, 239, 241, 251, 257, 263, 269, 271, 277, 281, 283, 293, 307, 311, 313, 317, 331, 337, 347, 349,
 	        353, 359, 367, 373, 379, 383, 389, 397, 401, 409, 419, 421, 431, 433, 439, 443, 449, 457, 461, 463, 467,

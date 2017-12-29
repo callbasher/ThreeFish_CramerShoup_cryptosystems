@@ -1,8 +1,7 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
-import random
-import itertools
+from random import getrandbits
 from src.Util import *
 
 # Constantes
@@ -16,13 +15,15 @@ tweak2 = tweak0 ^ tweak1
 tweaks = [tweak0, tweak1, tweak2]
 # soit 0x1bd11bdaa9fc1a22 en hexa C = constante pour la génération des clés des tournées
 C = 513129967392069919254
+
+
 # Création / génération de la clé symétrique
 def keygen(L_block, fichier):
     key = []
     hexkey = []
     k = 0
     for i in range(0, int(L_block/64) - 1):
-        n = random.getrandbits(64)
+        n = getrandbits(64)
         key.append(n)
         k ^= n
         hexk = int2hexa(n)
@@ -41,6 +42,7 @@ def keygen(L_block, fichier):
     k ^= C
     key.append(k)
     return key, keyuser
+
 
 def keygenturn(key):
     N = len(key) - 1
@@ -80,6 +82,7 @@ def keygenturn(key):
        VingtKeys.append(tabKey)
     return VingtKeys
 
+
 def mixcolumn(datalist):
     # en fonction de la taille du block on execute 2, 4 ou 8 fois le mélange
     datalistmix = []
@@ -95,6 +98,7 @@ def mixcolumn(datalist):
         datalistmix.append(m22)
     return datalistmix
 
+
 def inv_mixcolumn(datalist):
     # en fonction de la taille du block on execute 2, 4 ou 8 fois le mélange
     datalist_unmix = []
@@ -107,9 +111,11 @@ def inv_mixcolumn(datalist):
         datalist_unmix.append(m2)
     return datalist_unmix
 
+
 def permute(n):
     # invertion de l'ordre des mots
     return list(reversed(n))
+
 
 def ECB_threefish_cipher(datalist, tabkeys):
     encryp_list = []
@@ -122,6 +128,7 @@ def ECB_threefish_cipher(datalist, tabkeys):
         j = addition_modulaire_listes(j, tabkeys[19])
         encryp_list.append(j)
     return encryp_list
+
 
 def ECB_threefish_decipher(datalist, tabkeys):
     decrypt_list = []
@@ -137,7 +144,8 @@ def ECB_threefish_decipher(datalist, tabkeys):
         decrypt_list.append(j)
     return decrypt_list
 
-# Todo : terminé CBC cipher and decipher function
+
+# Todo : terminer CBC cipher and decipher function
 def CBC_threefish_cipher(datalist, tabkeys, L_bloc):
     encryp_list = []
     for j in datalist:
@@ -149,6 +157,7 @@ def CBC_threefish_cipher(datalist, tabkeys, L_bloc):
         j = addition_modulaire_listes(j, tabkeys[19])
         encryp_list.append(j)
     return encryp_list
+
 
 def CBC_threefish_decipher(datalist, tabkeys, L_bloc):
     decrypt_list = []
@@ -164,12 +173,14 @@ def CBC_threefish_decipher(datalist, tabkeys, L_bloc):
         decrypt_list.append(j)
     return decrypt_list
 
+
 def ROTD(Barray):
     longBarray = len(Barray)
     ROTDBarray = Barray[(longBarray - R):longBarray] + Barray[0:(longBarray - R)]
     ROTDBarray = strToInt(ROTDBarray)
     # return an int value
     return ROTDBarray
+
 
 def ROTG(Barray):
     longBarray = len(Barray)
@@ -178,8 +189,9 @@ def ROTG(Barray):
     # return an int value
     return ROTGBarray
 
+
 def IV_function(L_bloc):
     IV = []
     for i in range(0, int(L_bloc / 64)):
-        IV.append(random.getrandbits(64))
+        IV.append(getrandbits(64))
     return IV

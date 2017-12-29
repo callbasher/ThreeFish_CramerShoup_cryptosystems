@@ -3,9 +3,11 @@
 
 from src.Menu import *
 
+
 def main():
     x = show()
     apply(x)
+
 
 if __name__ == "__main__":
     x = 'y'

@@ -2,8 +2,10 @@
 # -*- coding: utf-8 -*-
 
 from random import SystemRandom, randint
-from src.Hash import hashInt
-from src.Util import *
+import src.Hash as hh
+import src.IO as io
+import src.Primes as pm
+
 
 # The password is hashed to an int.
 # This int correspond to the line in which the encrypted keys will be in the password file.
@@ -12,15 +14,16 @@ def apply(fichier, k = 512, password = "default"):
     pv_ciph = sym_cipher(password, private)
     pb_ciph = sym_cipher(password, public)
 
-    hash = hashInt(password)
-    #writefile(fich, data, begin)
-    writefile("../data/psw.txt", )
+    hash = hh.hashInt(password)
+    # writefile(fich, data, begin)
+    io.writefile("../data/psw.txt", )
 
-    blockList = readfile(fichier, 64, 64)
+    blockList = io.readfile(fichier, 64, 64)
 
     cryptedBytes = []
     for b in blockList:
         cryptedBytes.append(cipher(b))
+
 
 # The block is supposed to be an int.
 # The key is a table containing p, alpha1, alpha2, X, Y, W
@@ -37,8 +40,10 @@ def cipher(key, block):
 
     return B1, B2, c, v
 
+
 def decode(fichier, password):
     key = retrieveKey(password)
+
 
 def retrieveKey(password):
     # Read the "password" file containing all te keys
@@ -47,8 +52,11 @@ def retrieveKey(password):
     # decipher the key with ECB and the seed
     # return keys
     return password
+
+
 def sym_cipher(key, m):
     return key
+
 
 def find_generator(p, factors):
     b = 1
@@ -60,13 +68,14 @@ def find_generator(p, factors):
                 break
     return b
 
+
 def prime_and_generators(k):
-    p, q, r = safe_prime(k)
+    p, q, r = pm.safe_prime(k)
     # prime factors of p-1
     # we want only the different prime factors not their exponent so we remove duplicates
     # We put q at the end of the list to ensure that smaller factors are tried first
     # in "find_generator" function
-    factors = set(factorize(r))
+    factors = set(pm.factorize(r))
     factors.add(2)
     factors = list(factors)
     factors.append(q)
@@ -96,8 +105,6 @@ def generateKeys(k):
     private_key = {x1, x2, y1, y2, w}
     public_key = {p, g1, g2, X, Y, W}
 
-
-
-    writefile("public_key.txt", public_key)
+    io.writefile("public_key.txt", public_key)
 
     return private_key, public_key
