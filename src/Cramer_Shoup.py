@@ -1,9 +1,54 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
-from random import SystemRandom
+from random import SystemRandom, randint
+from src.Hash import hashInt
 from src.Util import *
 
+# The password is hashed to an int.
+# This int correspond to the line in which the encrypted keys will be in the password file.
+def apply(fichier, k = 512, password = "default"):
+    private, public = generateKeys(k)
+    pv_ciph = sym_cipher(password, private)
+    pb_ciph = sym_cipher(password, public)
+
+    hash = hashInt(password)
+    #writefile(fich, data, begin)
+    writefile("../data/psw.txt", )
+
+    blockList = readfile(fichier, 64, 64)
+
+    cryptedBytes = []
+    for b in blockList:
+        cryptedBytes.append(cipher(b))
+
+# The block is supposed to be an int.
+# The key is a table containing p, alpha1, alpha2, X, Y, W
+def cipher(key, block):
+    p, a1, a2, X, Y, W = key[0], key[1], key[2], key[3], key[4], key[5]
+    b = randint(0, p)
+    B1 = pow(a1, b, p)
+    B2 = pow(a2, b, p)
+    c = pow(W, b, p) * block
+    concat = (B1 + B2 + c) % p
+    H = hash(concat)
+
+    v = pow(X, b, p) * pow(Y, b*H, p)
+
+    return B1, B2, c, v
+
+def decode(fichier, password):
+    key = retrieveKey(password)
+
+def retrieveKey(password):
+    # Read the "password" file containing all te keys
+    # Hash the password to get three values : r, c, and seed.
+    # Find the keys with r and c
+    # decipher the key with ECB and the seed
+    # return keys
+    return password
+def sym_cipher(key, m):
+    return key
 
 def find_generator(p, factors):
     b = 1
@@ -34,7 +79,7 @@ def prime_and_generators(k):
     return p, alpha1, alpha2
 
 
-def generate_publicKey(k):
+def generateKeys(k):
     p, g1, g2 = prime_and_generators(k)
 
     Zp = range(2, p)
@@ -51,7 +96,8 @@ def generate_publicKey(k):
     private_key = {x1, x2, y1, y2, w}
     public_key = {p, g1, g2, X, Y, W}
 
+
+
     writefile("public_key.txt", public_key)
 
     return private_key, public_key
-
