@@ -137,31 +137,64 @@ def ECB_threefish_decipher(datalist, tabkeys):
         decrypt_list.append(j)
     return decrypt_list
 
-# Todo : terminé CBC cipher and decipher function
+# Todo : do correction CBC cipher and decipher function
 def CBC_threefish_cipher(datalist, tabkeys, L_bloc):
+    iv = IV_function(L_bloc)
     encryp_list = []
+    datalist[0] = xor_2_lists(datalist[0], iv)
+    var_count = 1
     for j in datalist:
-        for k in range(0, 19):
-            j = addition_modulaire_listes(j, tabkeys[k])
-            for i in range(4):
-                j = mixcolumn(j)
-                j = permute(j)
+        anterior_occurence_counter = 0
+        if var_count == 0:
+            # faire xor de j avec le j précédent
+            #j = xor_2_lists(j, datalist[anterior_occurence_counter])
+            #anterior_occurence_counter += 1
+            for k in range(0, 19):
+                j = addition_modulaire_listes(j, tabkeys[k])
+                for i in range(4):
+                    j = mixcolumn(j)
+                    j = permute(j)
+        else:
+            for k in range(0, 19):
+                j = addition_modulaire_listes(j, tabkeys[k])
+                for i in range(4):
+                    j = mixcolumn(j)
+                    j = permute(j)
         j = addition_modulaire_listes(j, tabkeys[19])
         encryp_list.append(j)
+        var_count = 0
     return encryp_list
 
 def CBC_threefish_decipher(datalist, tabkeys, L_bloc):
+    iv = IV_function(L_bloc)
     decrypt_list = []
+    var_count = 1
     for j in datalist:
-        counter = 18
-        j = soustraction_modulaire_listes(j, tabkeys[19])
-        for k in range(0, 19):
-            for i in range(4):
-                j = permute(j)
-                j = inv_mixcolumn(j)
-            j = soustraction_modulaire_listes(j, tabkeys[counter])
-            counter -= 1
+        anterior_occurence_counter = 0
+        if var_count == 0:
+            counter = 18
+            j = soustraction_modulaire_listes(j, tabkeys[19])
+            for k in range(0, 19):
+                for i in range(4):
+                    j = permute(j)
+                    j = inv_mixcolumn(j)
+                j = soustraction_modulaire_listes(j, tabkeys[counter])
+                counter -= 1
+            # faire xor de j avec le j précédent
+            #j = xor_2_lists(j, datalist[anterior_occurence_counter])
+            #anterior_occurence_counter += 1
+        else:
+            counter = 18
+            j = soustraction_modulaire_listes(j, tabkeys[19])
+            for k in range(0, 19):
+                for i in range(4):
+                    j = permute(j)
+                    j = inv_mixcolumn(j)
+                j = soustraction_modulaire_listes(j, tabkeys[counter])
+                counter -= 1
         decrypt_list.append(j)
+        var_count = 0
+    datalist[0] = xor_2_lists(datalist[0], iv)
     return decrypt_list
 
 def ROTD(Barray):
@@ -179,7 +212,17 @@ def ROTG(Barray):
     return ROTGBarray
 
 def IV_function(L_bloc):
-    IV = []
-    for i in range(0, int(L_bloc / 64)):
-        IV.append(random.getrandbits(64))
-    return IV
+    IV_256 = [11939804896947846136, 4219065746052997657, 14289511192216538576, 6129295191351922843]
+    IV_512 = [14021392340165679391, 10713825714517858312, 16678454614520143940, 2176821685655837471,
+              993364598582970774, 17432205245676079126, 15273195067266655935, 17670466041850028273]
+    IV_1024 = [15345143141016669355, 13465911367260466770, 5383010510772685731, 10149785470626774238,
+               616504849952386683, 9934305711475078234, 7510955176798512515, 10974823043510880208,
+               10506771315442257531, 2703887491885455230, 506214325955753681, 7244289412050330942,
+               15552188946686260547, 3934227692526149925, 8351231218515392481, 12278345771412770886]
+
+    if L_bloc == 256:
+        return IV_256
+    elif L_bloc == 512:
+        return IV_512
+    elif L_bloc == 1024:
+        return IV_1024
