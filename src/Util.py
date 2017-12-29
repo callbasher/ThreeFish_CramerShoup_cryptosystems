@@ -235,7 +235,6 @@ def readkey(fichier):
         data = rfile.read()
         return data
 
-# fonction de conversion int2bytearray
 def intToByteArray(to_convert):
     to_convert = int(to_convert)
     output = []
@@ -254,7 +253,6 @@ def intToByteArray(to_convert):
     result = str(result)
     return result
 
-# fonction de conversion de bytearray2int
 def strToInt(to_convert):
     return (int(to_convert, 2))
 
@@ -277,7 +275,6 @@ def soustracMod(Barray0, Barray1):
         result = "0" * (64 - len(result)) + result
     return result
 
-# fonction de conversion de bytearray2int
 def bytearrayToInt(to_convert):
     convert = "".join(to_convert)
     convert = int(convert, 2)
@@ -304,7 +301,6 @@ def xor_2_lists(list1, list2):
         output.append(result)
     return output
 
-# fonction qui renomme un fichier en .encrypt ou .txt et inversement
 def rename_fichier(path_fichier, option):
     rep = path_fichier.split("/")
     fichier = rep[len(rep) - 1]

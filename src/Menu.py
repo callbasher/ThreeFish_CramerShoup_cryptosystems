@@ -37,10 +37,11 @@ def apply(x):
             lect_fichier = readfile(fichier, bloc, 1)
             lect_fichier = organize_data_list(lect_fichier, L_block)
 
-            key, keyuser = keygen(L_block, fichier)
+            key, keyuser = keygen(L_block)
             tabKey = keygenturn(key)
             print("Voici votre clé symétrique sur ", L_block, " bits : \t\n######################################\t\n"
                   , keyuser, "\t\n######################################")
+            # Todo : écrire la key user dans un fichier texte dans le même répertoire que le fichier qui va être chiffré
 
             padding_fichier = ajout_padding(lect_fichier, L_block)
 

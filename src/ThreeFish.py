@@ -16,7 +16,6 @@ tweak2 = tweak0 ^ tweak1
 tweaks = [tweak0, tweak1, tweak2]
 # soit 0x1bd11bdaa9fc1a22 en hexa C = constante pour la génération des clés des tournées
 C = 513129967392069919254
-# todo : créer un fichier pour écrire la clé symétrique
 # Création / génération de la clé symétrique
 def keygen(L_block, fichier):
     key = []
@@ -41,12 +40,8 @@ def keygen(L_block, fichier):
             keyuser += i
     k ^= C
     key.append(k)
-    # écriture de la clé symétrique dans un fichier
-    writefile("../test/resources/symKey.txt", keyuser)
     return key, keyuser
-# Fin création / génération de la clé symétrique
 
-# Génération des 20 clés pour les tournées
 def keygenturn(key):
     N = len(key) - 1
     VingtKeys = []
@@ -84,9 +79,7 @@ def keygenturn(key):
        tabKey.append(k)
        VingtKeys.append(tabKey)
     return VingtKeys
-# Fin génération des clés
 
-# début fonction mélange
 def mixcolumn(datalist):
     # en fonction de la taille du block on execute 2, 4 ou 8 fois le mélange
     datalistmix = []
@@ -101,9 +94,7 @@ def mixcolumn(datalist):
         datalistmix.append(m11)
         datalistmix.append(m22)
     return datalistmix
-# Fin de la fonction mélange
 
-# début de la fonction inverse de mélange
 def inv_mixcolumn(datalist):
     # en fonction de la taille du block on execute 2, 4 ou 8 fois le mélange
     datalist_unmix = []
@@ -115,13 +106,10 @@ def inv_mixcolumn(datalist):
         datalist_unmix.append(m1)
         datalist_unmix.append(m2)
     return datalist_unmix
-# Fin de la fonction inverse de mélange
 
-# début fonction de permutation
 def permute(n):
     # invertion de l'ordre des mots
     return list(reversed(n))
-# fin fonction de permutation
 
 def ECB_threefish_cipher(datalist, tabkeys):
     encryp_list = []
@@ -149,6 +137,7 @@ def ECB_threefish_decipher(datalist, tabkeys):
         decrypt_list.append(j)
     return decrypt_list
 
+# Todo : terminé CBC cipher and decipher function
 def CBC_threefish_cipher(datalist, tabkeys, L_bloc):
     encryp_list = []
     for j in datalist:
@@ -175,27 +164,20 @@ def CBC_threefish_decipher(datalist, tabkeys, L_bloc):
         decrypt_list.append(j)
     return decrypt_list
 
-# fonction rotation circulaire droite d'une chaine de 64bits
-# require an str value
 def ROTD(Barray):
-    # la longueur de Barray dois être de 64
     longBarray = len(Barray)
     ROTDBarray = Barray[(longBarray - R):longBarray] + Barray[0:(longBarray - R)]
     ROTDBarray = strToInt(ROTDBarray)
     # return an int value
     return ROTDBarray
 
-# rotation circulaire gauche d'une chaine de 64bits
-# require an str value
 def ROTG(Barray):
-    # la longueur de Barray dois être de 64
     longBarray = len(Barray)
     ROTGBarray = Barray[R:longBarray] + Barray[0:R]
     ROTGBarray = strToInt(ROTGBarray)
     # return an int value
     return ROTGBarray
 
-# génération d'un IV pour le chiffrement CBC
 def IV_function(L_bloc):
     IV = []
     for i in range(0, int(L_bloc / 64)):
