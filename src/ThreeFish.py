@@ -17,7 +17,7 @@ tweaks = [tweak0, tweak1, tweak2]
 # soit 0x1bd11bdaa9fc1a22 en hexa C = constante pour la génération des clés des tournées
 C = 513129967392069919254
 # Création / génération de la clé symétrique
-def keygen(L_block, fichier):
+def keygen(L_block):
     key = []
     hexkey = []
     k = 0
