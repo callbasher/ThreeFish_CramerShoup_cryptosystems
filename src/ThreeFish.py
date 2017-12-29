@@ -41,11 +41,9 @@ def keygen(L_block, fichier):
             keyuser += i
     k ^= C
     key.append(k)
-    print("Voici votre clé symétrique sur ", L_block, " bits : \t\n######################################\t\n"
-          , keyuser, "\t\n######################################")
     # écriture de la clé symétrique dans un fichier
     writefile("../test/resources/symKey.txt", keyuser)
-    return key
+    return key, keyuser
 # Fin création / génération de la clé symétrique
 
 # Génération des 20 clés pour les tournées
