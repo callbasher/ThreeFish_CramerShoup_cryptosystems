@@ -23,30 +23,29 @@ def show():
 
 def apply(x):
     if x < 4:
+        # Todo : Garder uniquement les inputs ici et mettre le reste dans ThreeFish (par ex dans une fct "apply"
+        # Todo : avec tous les paramètres
+        bloc = 64
+        ModeChif = 0
+        while ModeChif != 1 and ModeChif != 2:
+            ModeChif = int(input("Veuillez choisir votre mode de chiffrement : \n\t1. ECB\n\t2. CBC"))
+
+        bloc_len = 0
+        while (bloc_len != 256) and (bloc_len != 512) and (bloc_len != 1024):
+            bloc_len = int(input("Choisir la taille de bloc à utiliser pour le chiffrement (256/512/1024) : "))
+        fichier = input("Veuillez entrer le chemin d'un fichier qui va être chiffré : ")
+        word_len = int(bloc_len / 64)
+
         if x == 1:
-            # Todo : Garder uniquement les inputs ici et mettre le reste dans ThreeFish (par ex dans une fct "apply"
-            # Todo : avec tous les paramètres
-            bloc = 64
-            print("Veuillez choisir votre mode de chiffrement : \n\t1. ECB\n\t2. CBC")
-            ModeChif = int(input("Option :"))
-            while ModeChif != 1 and ModeChif != 2:
-                ModeChif = int(input("Veuillez choisir votre mode de chiffrement : \n\t1. ECB\n\t2. CBC"))
-
-            L_block = int(input("Choisir la taille de bloc à utiliser pour le chiffrement (256/512/1024) : "))
-            while (L_block != 256) and (L_block != 512) and (L_block != 1024):
-                L_block = int(input("Choisir la taille de bloc à utiliser pour le chiffrement (256/512/1024) : "))
-
-            fichier = input("Veuillez entrer le chemin d'un fichier qui va être chiffré : ")
             lect_fichier = io.readfile(fichier, bloc, 1)
-            lect_fichier = io.organize_data_list(lect_fichier, L_block)
-
-            key, keyuser = tf.keygen(L_block)
+            lect_fichier = io.organize_data_list(lect_fichier, word_len)
+            key, keyuser = tf.keygen(bloc_len)
             tabKey = tf.keygenturn(key)
-            print("Voici votre clé symétrique sur ", L_block, " bits : \t\n######################################\t\n"
+            print("Voici votre clé symétrique sur ", bloc_len, " bits : \t\n######################################\t\n"
                   , keyuser, "\t\n######################################")
             # Todo : écrire la key user dans un fichier texte dans le même répertoire que le fichier qui va être chiffré
 
-            padding_fichier = io.ajout_padding(lect_fichier, L_block)
+            padding_fichier = io.ajout_padding(lect_fichier, bloc_len)
 
             if ModeChif == 1:
                 chiff = tf.ECB_threefish_cipher(padding_fichier, tabKey)
@@ -59,17 +58,6 @@ def apply(x):
             print("Félicitation !! Chiffrement terminé.")
 
         if x == 2:
-            bloc = 64
-            print("Veuillez choisir votre mode de déchiffrement : \n\t1. ECB\n\t2. CBC")
-            ModeChif = int(input("Option :"))
-            while ModeChif != 1 and ModeChif != 2:
-                ModeChif = int(input("Veuillez choisir votre mode de déchiffrement : \n\t1. ECB\n\t2. CBC"))
-
-            L_block = int(input("Choisir la taille de bloc à utiliser pour le déchiffrement (256/512/1024) : "))
-            while (L_block != 256) and (L_block != 512) and (L_block != 1024):
-                L_block = int(input("Choisir la taille de bloc à utiliser pour le déchiffrement (256/512/1024) : "))
-
-            fichier = input("Veuillez entrer le chemin d'un fichier qui va être déchiffré : ")
             io.rename_fichier(fichier, 1)
             lect_fichier = io.readfile(fichier, bloc, 0)
             lect_fichier = io.organize_data_list(lect_fichier, L_block)
@@ -81,9 +69,9 @@ def apply(x):
             if ModeChif == 1:
                 dchiff = tf.ECB_threefish_decipher(lect_fichier, tabKey)
             else:
-                dchiff = tf.CBC_threefish_decipher(lect_fichier, tabKey, L_block)
+                dchiff = tf.CBC_threefish_decipher(lect_fichier, tabKey, bloc_len)
 
-            no_padding_list = io.remove_padding_list(dchiff, L_block)
+            no_padding_list = io.remove_padding_list(dchiff, bloc_len)
             no_padding_data, valeur_pad = io.remove_padding_data(no_padding_list, bloc)
 
             io.write_file_list_pad(fichier, no_padding_data, valeur_pad)

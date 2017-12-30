@@ -101,12 +101,11 @@ def write_file_list_pad(fichier, data, val_last_data):
             wdata = last_list[len(last_list) - 1].to_bytes((8 - val_last_data), byteorder='little', signed=False)
             wfile.write(wdata)
 
-def organize_data_list(data_list, L_bloc):
+def organize_data_list(data_list, word_len):
     # permet de mettre les données dans un tableau de list de n mots de 64bits
-    l = int(L_bloc / 64)
     datalistorder = []
-    for i in range(0, len(data_list), l):
-        datalistorder.append(data_list[i:(i + l)])
+    for i in range(0, len(data_list), word_len):
+        datalistorder.append(data_list[i:(i + word_len)])
     return datalistorder
 
 

@@ -14,7 +14,7 @@ def apply(fichier, k = 512, password = "default"):
     pv_ciph = sym_cipher(password, private)
     pb_ciph = sym_cipher(password, public)
 
-    hash = hh.hashInt(password)
+    hashed_pass = hh.hashInt(password)
     # writefile(fich, data, begin)
     io.writefile("../data/psw.txt", )
 
@@ -43,7 +43,7 @@ def cipher(key, block):
 
 def decode(fichier, password):
     key = retrieveKey(password)
-
+    bloc_list = io.readfile(fichier, 64, )
 
 def retrieveKey(password):
     # Read the "password" file containing all te keys
