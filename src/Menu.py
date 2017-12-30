@@ -26,9 +26,9 @@ def apply(x):
         # Todo : Garder uniquement les inputs ici et mettre le reste dans ThreeFish (par ex dans une fct "apply"
         # Todo : avec tous les paramètres
         bloc = 64
-        ModeChif = 0
-        while ModeChif != 1 and ModeChif != 2:
-            ModeChif = int(input("Veuillez choisir votre mode de chiffrement : \n\t1. ECB\n\t2. CBC"))
+        mode = 0
+        while mode != 1 and mode != 2:
+            mode = int(input("Veuillez choisir votre mode de chiffrement : \n\t1. ECB\n\t2. CBC"))
 
         bloc_len = 0
         while (bloc_len != 256) and (bloc_len != 512) and (bloc_len != 1024):
@@ -37,7 +37,7 @@ def apply(x):
         word_len = int(bloc_len / 64)
 
         if x == 1:
-            lect_fichier = io.readfile(fichier, bloc, 1)
+            lect_fichier = io.readfile(fichier, bloc, True)
             lect_fichier = io.organize_data_list(lect_fichier, word_len)
             key, keyuser = tf.keygen(bloc_len)
             tabKey = tf.keygenturn(key)
@@ -47,10 +47,10 @@ def apply(x):
 
             padding_fichier = io.ajout_padding(lect_fichier, bloc_len)
 
-            if ModeChif == 1:
+            if mode == 1:
                 chiff = tf.ECB_threefish_cipher(padding_fichier, tabKey)
             else:
-                chiff = tf.CBC_threefish_cipher(padding_fichier, tabKey, L_block)
+                chiff = tf.CBC_threefish_cipher(padding_fichier, tabKey, bloc_len)
 
             io.writefilelist(fichier, chiff)
             io.rename_fichier(fichier, 0)
@@ -58,15 +58,15 @@ def apply(x):
             print("Félicitation !! Chiffrement terminé.")
 
         if x == 2:
-            io.rename_fichier(fichier, 1)
-            lect_fichier = io.readfile(fichier, bloc, 0)
-            lect_fichier = io.organize_data_list(lect_fichier, L_block)
+            io.rename_file(fichier, 1)
+            lect_fichier = io.readfile(fichier, bloc, False)
+            lect_fichier = io.organize_data_list(lect_fichier, bloc_len)
 
             # todo : faire une fonction qui va lire la clé sym et généré des clés avec keygenturn
             key = "ToDo"
             tabKey = io.keygenturn(key)
 
-            if ModeChif == 1:
+            if mode == 1:
                 dchiff = tf.ECB_threefish_decipher(lect_fichier, tabKey)
             else:
                 dchiff = tf.CBC_threefish_decipher(lect_fichier, tabKey, bloc_len)

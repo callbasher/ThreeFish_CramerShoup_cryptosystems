@@ -2,7 +2,8 @@ import os
 from random import getrandbits
 
 
-def rename_fichier(path_fichier, option):
+# Todo : be more clear abou the option or create two distinct functions
+def rename_file(path_fichier, option):
     rep = path_fichier.split("/")
     fichier = rep[len(rep) - 1]
     if option == 0:
@@ -23,9 +24,21 @@ def readkey(fichier):
         return data
 
 
+def read_tab_keys():
+    with open("../data/pass.txr", 'r') as kfile:
+        data = kfile.readlines()
+        return data
+
+
+# Takes a bytearray as input and write it in a file
+def write_tab_keys(data):
+    with open("../../data/pass.txt", 'w') as kfile:
+        kfile.writelines(data)
+
+
 # Début lecture fichier a chiffrer
 # but de la fonction est de lire L_Block du fichier et de les chiffrer puis d'écrire dans un nouveau fichier
-def readfile(fichier, bloc_len, do_padding):
+def readfile(fichier, bloc_len, has_padding):
     # information sur la taille du fichier
     taille_fich = os.stat(fichier).st_size
     # conversion de L_block en octets
@@ -59,7 +72,7 @@ def readfile(fichier, bloc_len, do_padding):
             data = int.from_bytes(data, byteorder='little', signed=False)
             datalist.append(data)
     else:
-        if do_padding == 1:
+        if has_padding:
             pad_last_byte = bytes([bloc_bytes_len])
             data_pad = b'0' * (bloc_bytes_len - 1) + pad_last_byte
             data_pad = int.from_bytes(data_pad, byteorder='little', signed=False)
