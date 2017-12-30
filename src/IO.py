@@ -60,7 +60,6 @@ def readfile(fichier, bloc_len, has_padding):
             datalist.append(data)
 
     # ajout de padding si necessaire
-    # TODO : add functiuon to add padding (already done ?)
     if last_bloc_len != 0:
         with open(fichier, 'rb') as rfile:
             rfile.seek(last_bloc_pos)
@@ -71,8 +70,7 @@ def readfile(fichier, bloc_len, has_padding):
             data = (n_byte_pad - 1) * b'0' + data + bytes([n_byte_pad])
             data = int.from_bytes(data, byteorder='little', signed=False)
             datalist.append(data)
-    else:
-        if has_padding:
+    elif has_padding:
             pad_last_byte = bytes([bloc_bytes_len])
             data_pad = b'0' * (bloc_bytes_len - 1) + pad_last_byte
             data_pad = int.from_bytes(data_pad, byteorder='little', signed=False)

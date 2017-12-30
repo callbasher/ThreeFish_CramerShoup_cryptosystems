@@ -85,3 +85,16 @@ def xor_2_lists(list1, list2):
         result = list1[i] ^ list2[i]
         output.append(result)
     return output
+
+
+def bezout(a, b):
+    (r, u, v, r1, u1, v1) = (a, 1, 0, b, 0, 1)
+    while r1 != 0:
+        q = int(r / r1)
+        (r, u, v, r1, u1, v1) = (r1, u1, v1, r - q * r1, u - q * u1, v - q * v1)
+    return r, u, v
+
+
+def inv(a, mod):
+    (r, u, v) = bezout(a, mod)
+    return u % mod
