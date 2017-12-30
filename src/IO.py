@@ -25,44 +25,43 @@ def readkey(fichier):
 
 # Début lecture fichier a chiffrer
 # but de la fonction est de lire L_Block du fichier et de les chiffrer puis d'écrire dans un nouveau fichier
-def readfile(fichier, L_block, do_padding):
+def readfile(fichier, bloc_len, do_padding):
     # information sur la taille du fichier
-    stat = os.stat(fichier)
-    tailleFich = stat.st_size
+    taille_fich = os.stat(fichier).st_size
     # conversion de L_block en octets
-    L_block_bytes = int(L_block / 8)
+    bloc_bytes_len = int(bloc_len / 8)
     # nbr de blocks sans padding
-    nbr_block_nopad = int(tailleFich / L_block_bytes)
+    n_bloc_nopad = int(taille_fich / bloc_bytes_len)
     # taille du dernier block
-    last_bloc_length = tailleFich - L_block_bytes * nbr_block_nopad
+    last_bloc_len = taille_fich - bloc_bytes_len * n_bloc_nopad
     # last_bloc détermine l'endroit ou commence le dernier bloc
-    last_bloc =  int(L_block_bytes * nbr_block_nopad)
+    last_bloc_pos = int(bloc_bytes_len * n_bloc_nopad)
     # list avec la valeur des int du fichier
     datalist = []
 
-    for i in range(0, (tailleFich - last_bloc_length), L_block_bytes):
+    for i in range(0, last_bloc_pos, bloc_bytes_len):
         with open(fichier, 'rb') as rfile:
             rfile.seek(i)
-            # L_block bits de data stocké dans la var data
-            data = rfile.read(L_block_bytes)
+            data = rfile.read(bloc_bytes_len)
             data = int.from_bytes(data, byteorder='little', signed=False)
             datalist.append(data)
 
-    # ajout de padding si tailleFich / L_block_bytes != entier sinon pas besoin de padding
-    if last_bloc_length != 0:
+    # ajout de padding si necessaire
+    # TODO : add functiuon to add padding (already done ?)
+    if last_bloc_len != 0:
         with open(fichier, 'rb') as rfile:
-            rfile.seek(last_bloc)
-            data = rfile.read(last_bloc_length)
+            rfile.seek(last_bloc_pos)
+            data = rfile.read(last_bloc_len)
             # méthode d'ajout de padding
-            nbr_byte_pad = L_block_bytes - len(data)
+            n_byte_pad = bloc_bytes_len - len(data)
             # ajout d'un dernier octet sur la fin pour préciser combien il y a d'octets de padding
-            data = (nbr_byte_pad - 1) * b'0' + data + bytes([nbr_byte_pad])
+            data = (n_byte_pad - 1) * b'0' + data + bytes([n_byte_pad])
             data = int.from_bytes(data, byteorder='little', signed=False)
             datalist.append(data)
     else:
         if do_padding == 1:
-            pad_last_byte = bytes([L_block_bytes])
-            data_pad = b'0' * (L_block_bytes - 1) + pad_last_byte
+            pad_last_byte = bytes([bloc_bytes_len])
+            data_pad = b'0' * (bloc_bytes_len - 1) + pad_last_byte
             data_pad = int.from_bytes(data_pad, byteorder='little', signed=False)
             datalist.append(data_pad)
     return datalist
