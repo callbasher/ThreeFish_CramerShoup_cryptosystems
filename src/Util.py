@@ -141,18 +141,18 @@ def organize_data_list(data_list, L_bloc):
 # input0 = tab of list
 # input1 = int (256,512 or 1024)
 # output = tab of list
-def ajout_padding(datalistorder, Length_chif_bloc):
+def ajout_padding(datalistorder, Length_chif_bloc, len_bloc):
     last_list = datalistorder[len(datalistorder) - 1]
     # if the last list length match with (4, 8 or 16) then do padding
     if len(last_list) == int(Length_chif_bloc / 64):
-        # a list of N(4, 8, 16) - 1 random int of 64bits is add
+        # a list of N(4, 8, 16) - 1 random int is add
         new_last_list = []
         for i in range(0, int(Length_chif_bloc / 64) - 1):
-            new_last_list.append(random.getrandbits(64))
-        pad_info = random.getrandbits(56)
+            new_last_list.append(random.getrandbits(len_bloc))
+        pad_info = random.getrandbits(len_bloc - 8)
         nbr_pad = int(Length_chif_bloc / 64)
-        # convertion in byte of the random 56bit int
-        pad_info = pad_info.to_bytes(7, byteorder='little', signed=False)
+        # convertion in byte of the random (N - 8) bits int
+        pad_info = pad_info.to_bytes(int((len_bloc - 8) / 8), byteorder='little', signed=False)
         pad_info = pad_info + bytes([nbr_pad])
         pad_info = int.from_bytes(pad_info, byteorder='little', signed=False)
         # info add in new list
@@ -162,8 +162,8 @@ def ajout_padding(datalistorder, Length_chif_bloc):
     else:
         # if only one word need to be add in the last list
         if len(last_list) + 1 == int(Length_chif_bloc / 64):
-            nbr_rand = random.getrandbits(56)
-            pad_info = nbr_rand.to_bytes(7, byteorder='little', signed=False)
+            nbr_rand = random.getrandbits(len_bloc - 8)
+            pad_info = nbr_rand.to_bytes(int((len_bloc - 8) / 8), byteorder='little', signed=False)
             pad_info = pad_info + bytes([1])
             pad_info = int.from_bytes(pad_info, byteorder='little', signed=False)
             # last int add in last list
@@ -171,9 +171,9 @@ def ajout_padding(datalistorder, Length_chif_bloc):
         else:
             lenght_last_list = int(Length_chif_bloc / 64) - len(last_list)
             for i in range(0, (int(Length_chif_bloc / 64) - len(last_list)) - 1):
-                last_list.append(random.getrandbits(64))
-            nbr_rand = random.getrandbits(56)
-            pad_info = nbr_rand.to_bytes(7, byteorder='little', signed=False)
+                last_list.append(random.getrandbits(len_bloc))
+            nbr_rand = random.getrandbits(len_bloc - 8)
+            pad_info = nbr_rand.to_bytes(int((len_bloc - 8) / 8), byteorder='little', signed=False)
             pad_info = pad_info + bytes([lenght_last_list])
             pad_info = int.from_bytes(pad_info, byteorder='little', signed=False)
             last_list.append(pad_info)
@@ -183,15 +183,15 @@ def ajout_padding(datalistorder, Length_chif_bloc):
 # input0 = tab of list
 # input1 = int (256, 512 or 1024)
 # output = tab of list
-def remove_padding_list(data, Length_chif_bloc):
+def remove_padding_list(data, Length_chif_bloc, len_bloc):
     # last list of the tab
     data_pad_list = data[len(data) - 1]
     # last element of the last list of the tab
     data_pad = data_pad_list[len(data_pad_list) - 1]
     # last element in byte
-    data_pad = data_pad.to_bytes(8, byteorder='little', signed=False)
+    data_pad = data_pad.to_bytes(int(len_bloc / 8), byteorder='little', signed=False)
     # value of the pading
-    data_pad_nbr = int(data_pad[7])
+    data_pad_nbr = int(data_pad[int((len_bloc - 8) / 8)])
     # if padding est is last list then we delete it
     if data_pad_nbr == int(Length_chif_bloc / 64):
         del data[len(data) - 1]
@@ -214,7 +214,7 @@ def remove_padding_data(data, L_bloc):
     # last element in byte
     data_pad = data_pad.to_bytes(L_bloc_byte, byteorder='little', signed=False)
     # value of the pading
-    data_pad_nbr = int(data_pad[7])
+    data_pad_nbr = int(data_pad[len(data_pad) - 1])
     if data_pad_nbr == L_bloc_byte:
         # last element of the last list deleted
         del data_pad_list[len(data_pad_list) - 1]

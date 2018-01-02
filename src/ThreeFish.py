@@ -42,7 +42,7 @@ def threefish_chiffrement():
           "\t\n######################################")
     # Todo : écrire la key user dans un fichier texte dans le même répertoire que le fichier qui va être chiffré
 
-    padding_fichier = ajout_padding(lect_fichier, L_block)
+    padding_fichier = ajout_padding(lect_fichier, L_block, bloc)
 
     if ModeChif == 1:
         chiff = ECB_threefish_cipher(padding_fichier, tabKey)
@@ -80,7 +80,7 @@ def threefish_dechiffrement():
     else:
         dchiff = CBC_threefish_decipher(lect_fichier, tabKey, L_block)
 
-    no_padding_list = remove_padding_list(dchiff, L_block)
+    no_padding_list = remove_padding_list(dchiff, L_block, bloc)
     no_padding_data, valeur_pad = remove_padding_data(no_padding_list, bloc)
 
     write_file_list_pad(fichier, no_padding_data, valeur_pad)
@@ -233,14 +233,13 @@ def ECB_threefish_decipher(datalist, tabkeys):
 def CBC_threefish_cipher(datalist, tabkeys, L_bloc):
     iv = IV_function(L_bloc)
     encryp_list = []
-    # xor between the iv and the first occurence
-    datalist[0] = xor_2_lists(datalist[0], iv)
+    datalist[0] = addition_modulaire_listes(datalist[0], iv)
     var_count = 1
     anterior_occurence_counter = 0
     for j in datalist:
         if var_count == 0:
-            # xor with the current occurence and the cipher occurence before
-            j = xor_2_lists(j, encryp_list[anterior_occurence_counter])
+            # modular addition with the current occurence and the cipher occurence before
+            j = addition_modulaire_listes(j, encryp_list[anterior_occurence_counter])
             anterior_occurence_counter += 1
             for k in range(0, 19):
                 j = addition_modulaire_listes(j, tabkeys[k])
@@ -274,11 +273,11 @@ def CBC_threefish_decipher(datalist, tabkeys, L_bloc):
             j = soustraction_modulaire_listes(j, tabkeys[counter])
             counter -= 1
         decrypt_list.append(j)
-    # xor with the cipher occurence before and the decipher occurence
+    # modular substract with the cipher occurence before and the decipher occurence
     for i in range(1, len(decrypt_list)):
-        decrypt_list[i] = xor_2_lists(decrypt_list[i], datalist[i - 1])
+        decrypt_list[i] = soustraction_modulaire_listes(decrypt_list[i], datalist[i - 1])
     # xor between the iv and the first occurence
-    decrypt_list[0] = xor_2_lists(decrypt_list[0], iv)
+    decrypt_list[0] = soustraction_modulaire_listes(decrypt_list[0], iv)
     return decrypt_list
 
 # function that do a right rotation

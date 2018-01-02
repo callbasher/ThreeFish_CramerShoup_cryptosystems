@@ -29,13 +29,13 @@ def apply(x):
             threefish_chiffrement()
 
         if x == 2:
-            threefish_dechiffrement()
+            print("Well Done !")
 
         if x == 3:
             print("Well Done !")
 
     elif x == 4:
-        print("Well Done !")
+        threefish_dechiffrement()
     elif x == 5:
         print("Well Done !")
 
