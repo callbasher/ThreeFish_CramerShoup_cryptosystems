@@ -8,14 +8,21 @@ import os
 import random
 import fnmatch
 
+# function that calculate the PGCD between 2 int
+# input0 = int
+# input1 = int
+# ouput = int
 def pgcd(a, b):
-    # calcul recursif du pgcd de a et b
+    # recursive calcul of a and b PGCD
     if b == 0:
         return a
     else:
         r = a % b
         return pgcd(b, r)
 
+# function that factorize an int
+# input = int
+# output = list of int
 def factorize(n):
     factors = []
     i = 2
@@ -30,7 +37,10 @@ def factorize(n):
 
     return factors
 
-# Test de primalité de Rabin-Miller, utilisé dans la génération de nombres premiers très grands
+# Rabin-Miller primality test, use in big prime number generation
+# input0 = int
+# input1 = int
+# ouput = boolean (true or false)
 def rabin_miller(n, t = 7):
     isPrime = True
     if n < 6:
@@ -61,6 +71,9 @@ def rabin_miller(n, t = 7):
 
     return isPrime
 
+# function that convert an int value into a hexa
+# input = int
+# output = hexa
 def int2hexa(n):
     hexk = hex(n)
     hexk = hexk.replace('\'', '')
@@ -68,37 +81,40 @@ def int2hexa(n):
     hexk = str(hexk)
     return hexk
 
+# function that read a file with binary method and can do padding if the last word
+# does not match wih the blck length
+# input0 = str
+# input1 = int (256, 512 or 1024)
+# input2 = boolean
+# output = list
 def readfile(fichier, L_block, do_padding):
-    # information sur la taille du fichier
+    # file length information
     stat = os.stat(fichier)
     tailleFich = stat.st_size
-    # conversion de L_block en octets
+    # conversion of L_block in byte
     L_block_bytes = int(L_block / 8)
-    # nbr de blocks sans padding
+    # nbr of blocks without padding
     nbr_block_nopad = int(tailleFich / L_block_bytes)
-    # taille du dernier block
+    # length of last block
     last_bloc_length = tailleFich - L_block_bytes * nbr_block_nopad
-    # last_bloc détermine l'endroit ou commence le dernier bloc
+    # last_bloc is where the last block start
     last_bloc =  int(L_block_bytes * nbr_block_nopad)
-    # list avec la valeur des int du fichier
     datalist = []
 
     for i in range(0, (tailleFich - last_bloc_length), L_block_bytes):
         with open(fichier, 'rb') as rfile:
             rfile.seek(i)
-            # L_block bits de data stocké dans la var data
             data = rfile.read(L_block_bytes)
             data = int.from_bytes(data, byteorder='little', signed=False)
             datalist.append(data)
 
-    # ajout de padding si tailleFich / L_block_bytes != entier sinon pas besoin de padding
+    # do padding if the file length / L_block_bytes != int
     if last_bloc_length != 0:
         with open(fichier, 'rb') as rfile:
             rfile.seek(last_bloc)
             data = rfile.read(last_bloc_length)
-            # méthode d'ajout de padding
             nbr_byte_pad = L_block_bytes - len(data)
-            # ajout d'un dernier octet sur la fin pour préciser combien il y a d'octets de padding
+            # add padding data in byte in the end of the block to inform how much padding byte has been add
             data = (nbr_byte_pad - 1) * b'0' + data + bytes([nbr_byte_pad])
             data = int.from_bytes(data, byteorder='little', signed=False)
             datalist.append(data)
@@ -110,41 +126,47 @@ def readfile(fichier, L_block, do_padding):
             datalist.append(data_pad)
     return datalist
 
+# function that organised a list into a tab of list of L_block / 64
+# input0 = list
+# input1 = int (256,512 or 1024)
+# ouput = tab of list
 def organize_data_list(data_list, L_bloc):
-    # permet de mettre les données dans un tableau de list de n mots de 64bits
     l = int(L_bloc / 64)
     datalistorder = []
     for i in range(0, len(data_list), l):
         datalistorder.append(data_list[i:(i + l)])
     return datalistorder
 
+# function that add padding data if the tab of list last list length is not enought
+# input0 = tab of list
+# input1 = int (256,512 or 1024)
+# output = tab of list
 def ajout_padding(datalistorder, Length_chif_bloc):
     last_list = datalistorder[len(datalistorder) - 1]
-    # si la dernière liste ne fais pas la bonne taille N(4, 8 ou 16) alors do padding
+    # if the last list length match with (4, 8 or 16) then do padding
     if len(last_list) == int(Length_chif_bloc / 64):
-        # ajout d'une liste de N(4, 8, 16) - 1 mot random de 64bits
+        # a list of N(4, 8, 16) - 1 random int of 64bits is add
         new_last_list = []
         for i in range(0, int(Length_chif_bloc / 64) - 1):
             new_last_list.append(random.getrandbits(64))
         pad_info = random.getrandbits(56)
-        # Si 4, 8 ou 16 mots on été ajoutés
         nbr_pad = int(Length_chif_bloc / 64)
-        # convertion en byte du randint de 56 bits
+        # convertion in byte of the random 56bit int
         pad_info = pad_info.to_bytes(7, byteorder='little', signed=False)
         pad_info = pad_info + bytes([nbr_pad])
         pad_info = int.from_bytes(pad_info, byteorder='little', signed=False)
-        # ajout de l'info dans la new list
+        # info add in new list
         new_last_list.append(pad_info)
-        # ajout de la new list dans le datalistorder
+        # add new list in datalistorder
         datalistorder.append(new_last_list)
     else:
-        # S'il ne faut ajouter q'un seul mot d'information a la dernière liste
+        # if only one word need to be add in the last list
         if len(last_list) + 1 == int(Length_chif_bloc / 64):
             nbr_rand = random.getrandbits(56)
             pad_info = nbr_rand.to_bytes(7, byteorder='little', signed=False)
             pad_info = pad_info + bytes([1])
             pad_info = int.from_bytes(pad_info, byteorder='little', signed=False)
-            # ajout du mot dans la dernière list
+            # last int add in last list
             last_list.append(pad_info)
         else:
             lenght_last_list = int(Length_chif_bloc / 64) - len(last_list)
@@ -157,16 +179,20 @@ def ajout_padding(datalistorder, Length_chif_bloc):
             last_list.append(pad_info)
     return datalistorder
 
+# function that remove padding information in a list
+# input0 = tab of list
+# input1 = int (256, 512 or 1024)
+# output = tab of list
 def remove_padding_list(data, Length_chif_bloc):
-    # dernière liste du tableau
+    # last list of the tab
     data_pad_list = data[len(data) - 1]
-    # dernier élément de la dernière liste du tableau
+    # last element of the last list of the tab
     data_pad = data_pad_list[len(data_pad_list) - 1]
-    # conversion du last element en byte
+    # last element in byte
     data_pad = data_pad.to_bytes(8, byteorder='little', signed=False)
-    # valeur du pading
+    # value of the pading
     data_pad_nbr = int(data_pad[7])
-    # Si le padding est la dernière liste complète alors on la supprime
+    # if padding est is last list then we delete it
     if data_pad_nbr == int(Length_chif_bloc / 64):
         del data[len(data) - 1]
     else:
@@ -175,34 +201,43 @@ def remove_padding_list(data, Length_chif_bloc):
         data.append(data_pad)
     return data
 
+# function that remove padding of an int in a list
+# input0 = tab of list
+# input1 = int (256, 512 or 1024)
+# output = tab of list
 def remove_padding_data(data, L_bloc):
     L_bloc_byte = int(L_bloc / 8)
-    # dernière liste du tableau
+    # last list of the tab
     data_pad_list = data[len(data) - 1]
-    # dernier élément de la dernière liste du tableau
+    # last element of the last list of the tab
     data_pad = data_pad_list[len(data_pad_list) - 1]
-    # conversion du last element en byte
+    # last element in byte
     data_pad = data_pad.to_bytes(L_bloc_byte, byteorder='little', signed=False)
-    # valeur du pading
+    # value of the pading
     data_pad_nbr = int(data_pad[7])
     if data_pad_nbr == L_bloc_byte:
-        # suppression du dernier élément de la dernière liste
+        # last element of the last list deleted
         del data_pad_list[len(data_pad_list) - 1]
     else:
         # remove padding
         data_pad_remove = data_pad[(data_pad_nbr - 1):(L_bloc_byte - 1)]
-        # convertion de la nouvelle data en int
+        # convertion of the new data in int
         new_data = int.from_bytes(data_pad_remove, byteorder='little', signed=False)
-        # suppression du dernier élément de la dernière liste
+        # last element of the last list deleted
         del data_pad_list[len(data_pad_list) - 1]
-        # insertion du dernier élément de la dernière liste
         data_pad_list.append(new_data)
     return data, data_pad_nbr
 
+# function that write str data in a file
+# input0 = str
+# input1 = str
 def writefile(fichier, data):
     with open(fichier, 'w') as wfile:
         wfile.write(data)
 
+# function that write a tab of list data into a file
+# input0 = str
+# input1 = tab of list
 def writefilelist(fichier, data):
     with open(fichier, 'wb') as wfile:
         for i in data:
@@ -210,16 +245,20 @@ def writefilelist(fichier, data):
                 j = j.to_bytes(8, byteorder='little', signed=False)
                 wfile.write(j)
 
+# function that write the tab of list data into a file and remove the padding
+# input0 = str
+# input1 = tab of list
+# input2 = int
 def write_file_list_pad(fichier, data, val_last_data):
     with open(fichier, 'wb') as wfile:
-        # ecriture de tout sauf de la dernière liste de data, celle qui contient la valeur sans padding
+        # write all the data except the last list in the tab, because there is padding
         for i in range(0, len(data) - 1):
             for j in data[i]:
                 j = j.to_bytes(8, byteorder='little', signed=False)
                 wfile.write(j)
-        # dernière liste
+        # last list
         last_list = data[len(data) - 1]
-        # écriture de tout sauf du dernier mot
+        # write all except the last int of 64bits (int where the padding is)
         for i in range(0, len(last_list) - 1):
             wdata = last_list[i].to_bytes(8, byteorder='little', signed=False)
             wfile.write(wdata)
@@ -230,11 +269,17 @@ def write_file_list_pad(fichier, data, val_last_data):
             wdata = last_list[len(last_list) - 1].to_bytes((8 - val_last_data), byteorder='little', signed=False)
             wfile.write(wdata)
 
+# function that read the key in a file
+# input = str
+# output = str
 def readkey(fichier):
     with open(fichier, 'r') as rfile:
         data = rfile.read()
         return data
 
+# function that convert a 64 bits int value into a list of str
+# intput = int
+# output = list of str
 def intToByteArray(to_convert):
     to_convert = int(to_convert)
     output = []
@@ -253,9 +298,16 @@ def intToByteArray(to_convert):
     result = str(result)
     return result
 
+# function that convert a str value into an int value
+# input = str
+# output = int
 def strToInt(to_convert):
     return (int(to_convert, 2))
 
+# function that xor 2 list of binary str value
+# input0 = list of str
+# input1 = list of str
+# output = str
 def xor_function(Barray0, Barray1):
     result = str(bin(int(Barray0, 2) ^ int(Barray1, 2)))
     result = result.replace('0b', '', 1)
@@ -263,11 +315,19 @@ def xor_function(Barray0, Barray1):
         result = "0" * (64 - len(result)) + result
     return result
 
+# function that add 2 list of binary str value
+# input0 = list of str
+# input1 = list of str
+# output = str
 def additionMod(Barray0, Barray1):
     result = str(bin((int(Barray0, 2) + int(Barray1, 2)) % 2**64))
     result = result.replace('0b', '', 1)
     return result
 
+# function that substract 2 list of binary str value
+# input0 = list of str
+# input1 = list of str
+# output = str
 def soustracMod(Barray0, Barray1):
     result = str(bin((int(Barray0, 2) - int(Barray1, 2)) % 2**64))
     result = result.replace('0b', '', 1)
@@ -275,11 +335,18 @@ def soustracMod(Barray0, Barray1):
         result = "0" * (64 - len(result)) + result
     return result
 
+# function that convert a list of str into an 64bits int
+# input = list of str
+# output = int
 def bytearrayToInt(to_convert):
     convert = "".join(to_convert)
     convert = int(convert, 2)
     return convert
 
+# function that modular add 2 lists
+# input0 = tab of list
+# input1 = tab of list
+# output = tab of list
 def addition_modulaire_listes(data_list, tab_keys):
     output = []
     for i in range(0, len(data_list)):
@@ -287,6 +354,10 @@ def addition_modulaire_listes(data_list, tab_keys):
         output. append(result)
     return output
 
+# function that modular substract 2 lists
+# input0 = tab of list
+# input1 = tab of list
+# output = tab of list
 def soustraction_modulaire_listes(data_list, tab_keys):
     output = []
     for i in range(0, len(data_list)):
@@ -294,6 +365,10 @@ def soustraction_modulaire_listes(data_list, tab_keys):
         output.append(result)
     return output
 
+# function that xor 2 lists
+# input0 = list
+# input1 = list
+# output = list
 def xor_2_lists(list1, list2):
     output = []
     for i in range(0, len(list1)):
@@ -301,6 +376,10 @@ def xor_2_lists(list1, list2):
         output.append(result)
     return output
 
+# function that rename a file
+# input0 = str
+# input1 = boolean
+# output = nothing
 def rename_fichier(path_fichier, option):
     rep = path_fichier.split("/")
     fichier = rep[len(rep) - 1]
