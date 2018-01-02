@@ -11,8 +11,11 @@ def show():
     print("\t\t\tProjet GS15 - A17 - ThreeFish - CramerShoup")
     print("\nMenu :\n")
     print(
-        "\t1. Chiffrement symétrique ThreeFish\n\t2. Chiffrement de Cramer-Shoup\n\t3. Hashage d'un message\n\t4. Déchiffrement sysmétrique ThreeFish\n\t"
-        + "5. Déchiffrement Cramer-Shoup\n\t6. Vérification d'un hash")
+        "\t1. Chiffrement symétrique ThreeFish\n\t"
+        "2. Chiffrement de Cramer-Shoup\n\t"
+        "3. Hashage d'un message\n\t"
+        "4. Déchiffrement sysmétrique ThreeFish\n\t"
+        "5. Déchiffrement Cramer-Shoup\n\t6. Vérification d'un hash")
     x = int(input("Option : "))
     while x < 0 or x > 6:
         x = int(input("Option : "))
@@ -39,8 +42,11 @@ def apply(x):
 
             key, keyuser = keygen(L_block)
             tabKey = keygenturn(key)
-            print("Voici votre clé symétrique sur ", L_block, " bits : \t\n######################################\t\n"
-                  , keyuser, "\t\n######################################")
+            print("Voici votre clé symétrique sur ",
+                  L_block,
+                  " bits : \t\n######################################\t\n",
+                  keyuser,
+                  "\t\n######################################")
             # Todo : écrire la key user dans un fichier texte dans le même répertoire que le fichier qui va être chiffré
 
             padding_fichier = ajout_padding(lect_fichier, L_block)
