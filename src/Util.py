@@ -13,7 +13,7 @@ def int2str_hexa(n):
 # function that convert a 64 bits int value into a list of str
 # intput = int
 # output = list of str
-def int2byte_array(to_convert):
+def int2bin_str(to_convert):
     to_convert = int(to_convert)
     output = []
     result = []
@@ -35,7 +35,7 @@ def int2byte_array(to_convert):
 # function that convert a list of str into an 64bits int
 # input = list of str
 # output = int
-def byte_array2int(to_convert):
+def bin_str_list2int(to_convert):
     convert = "".join(to_convert)
     return int(convert, 2)
 
@@ -51,8 +51,8 @@ def bin_str2int(to_convert):
 # input0 = list of str
 # input1 = list of str
 # output = str
-def xor_bytes(b_array0, b_array1):
-    result = str(bin(int(b_array0, 2) ^ int(b_array1, 2)))
+def xor_bytes(bin_str0, bin_str1):
+    result = str(bin(int(bin_str0, 2) ^ int(bin_str1, 2)))
     result = result.replace('0b', '', 1)
     if len(result) < 64:
         result = "0" * (64 - len(result)) + result
@@ -75,8 +75,8 @@ def xor_lists(list0, list1):
 # input0 = list of str
 # input1 = list of str
 # output = str
-def add_64bits(b_array0, b_array1):
-    result = str(bin((int(b_array0, 2) + int(b_array1, 2)) % 2**64))
+def add_64bits(bin_str0, bin_str1):
+    result = str(bin((int(bin_str0, 2) + int(bin_str1, 2)) % 2**64))
     result = result.replace('0b', '', 1)
     return result
 
@@ -85,8 +85,8 @@ def add_64bits(b_array0, b_array1):
 # input0 = list of str
 # input1 = list of str
 # output = str
-def subtract_64bits(b_array0, b_array1):
-    result = str(bin((int(b_array0, 2) - int(b_array1, 2)) % 2**64))
+def subtract_64bits(bin_str0, bin_str1):
+    result = str(bin((int(bin_str0, 2) - int(bin_str1, 2)) % 2**64))
     result = result.replace('0b', '', 1)
     if len(result) < 64:
         result = "0" * (64 - len(result)) + result

@@ -131,12 +131,12 @@ def mixcolumn(datalist):
     # according to the block length we do 2, 4 or 8 times the mix
     datalistmix = []
     for i in range(0, len(datalist) - 1, 2):
-        m11 = util.add_64bits(util.int2byte_array(datalist[i]), util.int2byte_array(datalist[i + 1]))
+        m11 = util.add_64bits(util.int2bin_str(datalist[i]), util.int2bin_str(datalist[i + 1]))
         m11 = util.bin_str2int(m11)
 
-        rotation = util.rotate_right(util.int2byte_array(datalist[(i + 1)]), R)
+        rotation = util.rotate_right(util.int2bin_str(datalist[(i + 1)]), R)
 
-        m22 = util.xor_bytes(util.int2byte_array(m11), util.int2byte_array(rotation))
+        m22 = util.xor_bytes(util.int2bin_str(m11), util.int2bin_str(rotation))
         m22 = util.bin_str2int(m22)
         datalistmix.append(m11)
         datalistmix.append(m22)
@@ -150,9 +150,9 @@ def inv_mixcolumn(datalist):
     # according to the block lenght we do 2, 4 or 8 times the mix
     datalist_unmix = []
     for i in range(0, len(datalist) - 1, 2):
-        xor = util.xor_bytes(util.int2byte_array(datalist[i]), util.int2byte_array(datalist[(i + 1)]))
+        xor = util.xor_bytes(util.int2bin_str(datalist[i]), util.int2bin_str(datalist[(i + 1)]))
         m2 = util.rotate_left(xor, R)
-        m1 = util.subtract_64bits(util.int2byte_array(datalist[i]), util.int2byte_array(m2))
+        m1 = util.subtract_64bits(util.int2bin_str(datalist[i]), util.int2bin_str(m2))
         m1 = util.bin_str2int(m1)
         datalist_unmix.append(m1)
         datalist_unmix.append(m2)
