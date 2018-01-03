@@ -186,7 +186,7 @@ def ajout_padding(datalistorder, ciph_bloc_len, len_bloc):
             for i in range(0, last_list_len - 1):
                 last_list.append(getrandbits(len_bloc))
             nbr_rand = getrandbits(len_bloc - 8)
-            pad_info = nbr_rand.to_bytes(len_bloc_bytes, byteorder='little', signed=False)
+            pad_info = nbr_rand.to_bytes(len_bloc_bytes - 1, byteorder='little', signed=False)
             pad_info = pad_info + bytes([last_list_len])
             pad_info = int.from_bytes(pad_info, byteorder='little', signed=False)
             last_list.append(pad_info)

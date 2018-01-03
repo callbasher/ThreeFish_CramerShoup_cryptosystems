@@ -41,7 +41,7 @@ def apply(x):
             file_data = io.readfile(file_path, bloc_len, 1)
             file_data_list = io.organize_data_list(file_data, word_len)
 
-            encrypted_file = tf.threefish_chiffrement(file_data_list, mode, key_len)
+            encrypted_file = tf.threefish_chiffrement(file_data_list, mode, key_len, bloc_len)
 
             io.writefilelist(file_path, encrypted_file)
             io.rename_file(file_path, 0)
@@ -53,7 +53,7 @@ def apply(x):
             ciph_data = io.readfile(file_path, bloc_len, 0)
             ciph_data_list = io.organize_data_list(ciph_data, word_len)
 
-            clear_file_data = tf.threefish_dechiffrement(ciph_data_list, mode, key_len)
+            clear_file_data = tf.threefish_dechiffrement(ciph_data_list, mode, key_len, bloc_len)
 
             io.writefilelist(file_path, clear_file_data)
 

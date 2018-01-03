@@ -19,8 +19,8 @@ C = 513129967392069919254
 
 
 # function that is apply when the user chose the option 1 in the menu
-def threefish_chiffrement(file_data_list, mode, key_len):
-    key, keyuser = keygen(key_len)
+def threefish_chiffrement(file_data_list, mode, key_len, bloc_len):
+    key, keyuser = keygen(key_len, bloc_len)
     tabKey = keygenturn(key)
     io.print_key(key_len, keyuser)
 
@@ -152,7 +152,7 @@ def inv_mixcolumn(datalist):
     for i in range(0, len(datalist) - 1, 2):
         xor = util.xor_bytes(util.int2byte_array(datalist[i]), util.int2byte_array(datalist[(i + 1)]))
         m2 = util.rotate_left(xor, R)
-        m1 = util.subtract_list_64bits(util.int2byte_array(datalist[i]), util.int2byte_array(m2))
+        m1 = util.subtract_64bits(util.int2byte_array(datalist[i]), util.int2byte_array(m2))
         m1 = util.bin_str2int(m1)
         datalist_unmix.append(m1)
         datalist_unmix.append(m2)
