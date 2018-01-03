@@ -11,8 +11,11 @@ def get_primes():
 primes = get_primes()
 
 
+# function that calculate the PGCD between 2 int
+# input0 = int
+# input1 = int
+# ouput = int
 def pgcd(a, b):
-    # calcul recursif du pgcd de a et b
     if b == 0:
         return a
     else:
@@ -20,6 +23,9 @@ def pgcd(a, b):
         return pgcd(b, r)
 
 
+# function that factorize an int
+# input = int
+# output = list of int
 def factorize(n):
     factors = []
     i = 2
@@ -53,7 +59,10 @@ def trial_division(n, B=1000):
     return isDivisible
 
 
-# Test de primalité de Rabin-Miller, utilisé dans la génération de nombres premiers très grands
+# Rabin-Miller primality test, use in big prime number generation
+# input0 = int
+# input1 = int
+# ouput = boolean (true or false)
 def rabin_miller(n, t = 7):
     isPrime = True
     if n < 6:

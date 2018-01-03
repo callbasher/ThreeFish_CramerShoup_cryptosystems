@@ -18,19 +18,19 @@ def apply(fichier, public_key_dest, k = 512, password = "default"):
     bloc_list = IO.readfile(fichier, 64, 0)
     crypt_bytes = []
     for b in bloc_list:
-        crypt_bytes.append(cipher(public, b))
+        crypt_bytes.append(cipher(b, public))
 
 
 # The block is supposed to be an int.
 # The key is a table containing p, alpha1, alpha2, X, Y, W
-def cipher(key, bloc):
+def cipher(bloc, key):
     p, a1, a2, X, Y, W = key[0], key[1], key[2], key[3], key[4], key[5]
     b = randint(0, p)
     B1 = pow(a1, b, p)
     B2 = pow(a2, b, p)
     c = (pow(W, b, p) * bloc) % p
     concat = (B1 + B2 + c) % p
-    H = Hh.hashInt(concat)
+    H = Hh.blake_hash(concat, 64)
 
     v = (pow(X, b, p) * pow(Y, b*H, p)) % p
 
@@ -53,9 +53,10 @@ def decipher(key, bloc):
 
     # 1 : Validate bloc
     concat = (B1 + B2 + c) % p
-    beta = Hh.hashInt(concat)
+    H = Hh.blake_hash(concat, 64)
     By = (pow(B1, y1, p) * pow(B2, y2, p)) % p
-    vv = (pow(B1, x1, p) * pow(B2, x2, p) * pow(By, beta, p)) % p
+    vv = (pow(B1, x1, p) * pow(B2, x2, p) * pow(By, H, p)) % p
+    # Compute res only if bloc is validated.
     if vv == v:
         return (util.inv(pow(B1, w, p), p) * c) % p
 
@@ -69,7 +70,7 @@ def write_pv_key(password, key):
 
 
 def hash_pass(password):
-    passInt = Hh.hashInt(password)
+    passInt = int(Hh.blake_hash(password))
     seed(passInt)
     return randint(0, 10000)
 
@@ -128,7 +129,7 @@ def generateKeys(k):
     Y = pow(g1, y1, p) * pow(g2, y2, p)
     W = pow(g1, w, p)
 
-    private_key = {p, x1, x2, y1, y2, w}
-    public_key = {p, g1, g2, X, Y, W}
+    private_key = [p, x1, x2, y1, y2, w]
+    public_key = [p, g1, g2, X, Y, W]
 
     return private_key, public_key
