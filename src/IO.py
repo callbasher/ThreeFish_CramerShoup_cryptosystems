@@ -1,8 +1,6 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
-
-
 import os
 from random import getrandbits
 
@@ -25,38 +23,6 @@ def rename_file(path_fichier, option_remove_encrypt_extension):
     os.rename(path_fichier, new_fichier)
 
 
-# print key len and hexa key to the user
-# key_len = int
-# key = str
-def print_key(key_len, key):
-    print("Voici votre clé symétrique sur ", key_len, "bits :",
-          "\t\n######################################\t\n",
-          key,
-          "\t\n######################################")
-
-
-# function that read the key in a file
-# fichier = str
-# data = str
-def readkey(fichier):
-    with open(fichier, 'r') as rfile:
-        data = rfile.read()
-        return data
-
-
-def read_tab_keys():
-    with open("../data/pass.txr", 'r') as kfile:
-        data = kfile.readlines()
-        return data
-
-
-# Takes a bytearray as input and write it in a file
-# data =
-def write_tab_keys(data):
-    with open("../../data/pass.txt", 'w') as kfile:
-        kfile.writelines(data)
-
-
 # function that read a file with binary method and can do padding if the last word
 # does not match wih the blck length
 # fichier = str
@@ -64,15 +30,10 @@ def write_tab_keys(data):
 # has_padding = boolean
 # datalist = list
 def readfile(fichier, bloc_len, has_padding):
-    # file length information
     taille_fich = os.stat(fichier).st_size
-    # conversion of L_block in byte
     bloc_bytes_len = int(bloc_len / 8)
-    # nbr of blocks without padding
     n_bloc_nopad = int(taille_fich / bloc_bytes_len)
-    # length of last block
     last_bloc_len = taille_fich - bloc_bytes_len * n_bloc_nopad
-    # last_bloc is where the last block start
     last_bloc_pos = int(bloc_bytes_len * n_bloc_nopad)
     datalist = []
 
@@ -133,7 +94,6 @@ def write_file_list_pad(fichier, data, bloc_byte_len, val_last_data):
             for j in data[i]:
                 j = j.to_bytes(bloc_byte_len, byteorder='little', signed=False)
                 wfile.write(j)
-        # last list
         last_list = data[len(data) - 1]
         # write all except the last int of 64bits (int where the padding is)
         for i in range(0, len(last_list) - 1):
@@ -150,13 +110,43 @@ def write_file_list_pad(fichier, data, bloc_byte_len, val_last_data):
 
 # function that organised a list into a tab of list of L_block / 64
 # data_list = list
-# word_len = int (256,512 or 1024)
+# num_word = int (4, 8, 16)
 # datalistorder = tab of list
-def organize_data_list(data_list, word_len):
-    # permet de mettre les données dans un tableau de list de n mots de 64bits
+def organize_data_list(data_list, num_word):
     datalistorder = []
-    for i in range(0, len(data_list), word_len):
-        datalistorder.append(data_list[i:(i + word_len)])
+    for i in range(0, len(data_list), num_word):
+        datalistorder.append(data_list[i:(i + num_word)])
+    return datalistorder
+
+
+# function that add padding data to the data list
+# if some words are missing in the last line, these words are padded
+# if no words is missing, a complete new line is added with padded words
+# The information about the number of padded words is contained in the last 8 bits
+# of the last padded word
+# datalistorder = 2D array of integers.
+# num_word = number of words wanted in each row of the array
+# len_word = size of the words in bytes
+# datalistorder = a padded 2D array
+def ajout_padding_v2(datalistorder, num_word, len_word):
+    last_list = datalistorder[len(datalistorder) - 1]
+    num_to_pad = num_word - len(last_list)
+
+    # If the last line is complete, we add a full new line of padded words
+    pad_list = []
+    if num_to_pad == 0:
+        num_to_pad = num_word
+    else:
+        pad_list = last_list
+        datalistorder.remove(last_list)
+
+    for i in range(0, num_to_pad-1):
+        pad_list.append(getrandbits(len_word))
+    last_word = getrandbits((len_word-1) << 3).to_bytes(len_word-1, byteorder='little', signed=False)
+    last_word += bytes([num_to_pad])
+    pad_list.append(int.from_bytes(last_word, byteorder='little', signed=False))
+    datalistorder.append(pad_list)
+
     return datalistorder
 
 
@@ -166,8 +156,8 @@ def organize_data_list(data_list, word_len):
 # len_bloc = int
 # datalistorder = tab of list
 def ajout_padding(datalistorder, ciph_bloc_len, len_bloc):
-    len_bloc_bytes = int(len_bloc / 8)
     last_list = datalistorder[len(datalistorder) - 1]
+    len_bloc_bytes = int(len_bloc / 8)
     # if the last list length match with (4, 8 or 16) then do padding
     if len(last_list) == int(ciph_bloc_len / 64):
         # a list of N(4, 8, 16) - 1 random int is add
@@ -176,13 +166,10 @@ def ajout_padding(datalistorder, ciph_bloc_len, len_bloc):
             new_last_list.append(getrandbits(len_bloc))
         pad_info = getrandbits(len_bloc - 8)
         nbr_pad = int(ciph_bloc_len / 64)
-        # convertion en byte du randint de 56 bits
         pad_info = pad_info.to_bytes(len_bloc_bytes - 1, byteorder='little', signed=False)
         pad_info = pad_info + bytes([nbr_pad])
         pad_info = int.from_bytes(pad_info, byteorder='little', signed=False)
-        # info add in new list
         new_last_list.append(pad_info)
-        # add new list in datalistorder
         datalistorder.append(new_last_list)
     else:
         # if only one word need to be add in the last list
