@@ -25,6 +25,7 @@ def show():
 def apply(x):
     if x < 3:
         bloc_len = 64
+        bloc_byte_len = int(bloc_len / 8)
         mode = 0
         while mode != 1 and mode != 2:
             mode = int(input("Veuillez choisir votre mode de chiffrement : \n\t1. ECB\n\t2. CBC"))
@@ -43,7 +44,7 @@ def apply(x):
 
             encrypted_file = tf.threefish_chiffrement(file_data_list, mode, key_len, bloc_len)
 
-            io.writefilelist(file_path, encrypted_file)
+            io.writefilelist(file_path, encrypted_file, bloc_byte_len)
             io.rename_file(file_path, 0)
 
             print("Chiffrement terminé.")
@@ -53,20 +54,20 @@ def apply(x):
             ciph_data = io.readfile(file_path, bloc_len, 0)
             ciph_data_list = io.organize_data_list(ciph_data, word_len)
 
-            clear_file_data = tf.threefish_dechiffrement(ciph_data_list, mode, key_len, bloc_len)
+            clear_file_data, valeur_pad = tf.threefish_dechiffrement(ciph_data_list, mode, key_len, bloc_len)
 
-            io.writefilelist(file_path, clear_file_data)
+            io.write_file_list_pad(file_path, clear_file_data, bloc_byte_len, valeur_pad)
 
             print("Déchiffrement terminé.")
 
     elif x == 3:
-            print("Well Done !")
+            print("todo")
 
     elif x == 4:
-        print("Well Done !")
+        print("todo")
 
     elif x == 5:
-        print("Well Done !")
+        print("todo")
 
     elif x == 6:
-        print("Well Done !")
+        print("todo")

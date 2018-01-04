@@ -3,16 +3,16 @@
 
 
 # function that convert an int value into a hexa
-# input = int
-# output = hexa
+# n = int
+# str(hexk) = hexa
 def int2str_hexa(n):
     hexk = hex(n).replace('\'', '').replace('0x', '', 1)
     return str(hexk)
 
 
 # function that convert a 64 bits int value into a list of str
-# intput = int
-# output = list of str
+# to_convert = int
+# result = list of str
 def int2bin_str(to_convert):
     to_convert = int(to_convert)
     output = []
@@ -33,24 +33,24 @@ def int2bin_str(to_convert):
 
 
 # function that convert a list of str into an 64bits int
-# input = list of str
-# output = int
+# to_convert = list of str
+# int(convert, 2) = int
 def bin_str_list2int(to_convert):
     convert = "".join(to_convert)
     return int(convert, 2)
 
 
 # function that convert a str value into an int value
-# input = str
-# output = int
+# to_convert = str
+# int(to_convert, 2) = int
 def bin_str2int(to_convert):
     return int(to_convert, 2)
 
 
 # function that xor 2 list of binary str value
-# input0 = list of str
-# input1 = list of str
-# output = str
+# bin_str0 = list of str
+# bin_str1 = list of str
+# result = str
 def xor_bytes(bin_str0, bin_str1):
     result = str(bin(int(bin_str0, 2) ^ int(bin_str1, 2)))
     result = result.replace('0b', '', 1)
@@ -60,8 +60,8 @@ def xor_bytes(bin_str0, bin_str1):
 
 
 # function that xor 2 lists
-# input0 = list
-# input1 = list
+# list0 = list
+# list1 = list
 # output = list
 def xor_lists(list0, list1):
     output = []
@@ -72,9 +72,9 @@ def xor_lists(list0, list1):
 
 
 # function that add 2 list of binary str value
-# input0 = list of str
-# input1 = list of str
-# output = str
+# bin_str0 = list of str
+# bin_str1 = list of str
+# result = str
 def add_64bits(bin_str0, bin_str1):
     result = str(bin((int(bin_str0, 2) + int(bin_str1, 2)) % 2**64))
     result = result.replace('0b', '', 1)
@@ -82,9 +82,9 @@ def add_64bits(bin_str0, bin_str1):
 
 
 # function that substract 2 list of binary str value
-# input0 = list of str
-# input1 = list of str
-# output = str
+# bin_str0 = list of str
+# bin_str1 = list of str
+# result = str
 def subtract_64bits(bin_str0, bin_str1):
     result = str(bin((int(bin_str0, 2) - int(bin_str1, 2)) % 2**64))
     result = result.replace('0b', '', 1)
@@ -94,8 +94,8 @@ def subtract_64bits(bin_str0, bin_str1):
 
 
 # function that modular add 2 lists
-# input0 = tab of list
-# input1 = tab of list
+# data_list = tab of list
+# tab_keys = tab of list
 # output = tab of list
 def add_list_64bits(data_list, tab_keys):
     output = []
@@ -106,8 +106,8 @@ def add_list_64bits(data_list, tab_keys):
 
 
 # function that modular substract 2 lists
-# input0 = tab of list
-# input1 = tab of list
+# data_list = tab of list
+# tab_keys = tab of list
 # output = tab of list
 def subtract_list_64bits(data_list, tab_keys):
     output = []
@@ -131,22 +131,22 @@ def inv(a, mod):
 
 
 # function that do a right rotation
-# input = list of string
-# output = int
-def rotate_right(b_array, rot):
-    array_len = len(b_array)
-    rot_array = b_array[(array_len - rot):array_len] + b_array[0:(array_len - rot)]
-    # return an int value
+# bin_str = list of string
+# rot = int
+# bin_str2int(rot_array) = int
+def rotate_right(bin_str, rot):
+    array_len = len(bin_str)
+    rot_array = bin_str[(array_len - rot):array_len] + bin_str[0:(array_len - rot)]
     return bin_str2int(rot_array)
 
 
 # function that do a left rotation
-# input = list of string
-# output = int
-def rotate_left(b_array, rot):
-    array_len = len(b_array)
-    rot_array = b_array[rot:array_len] + b_array[0:rot]
-    # return an int value
+# bin_str = list of string
+# rot = int
+# bin_str2int(rot_array) = int
+def rotate_left(bin_str, rot):
+    array_len = len(bin_str)
+    rot_array = bin_str[rot:array_len] + bin_str[0:rot]
     return bin_str2int(rot_array)
 
 

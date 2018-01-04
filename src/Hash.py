@@ -44,12 +44,12 @@ def blake_hash(M, hash_len, key = []):
         chunk = M[bytes_compressed:bytes_compressed+127]
         bytes_compressed += 128
         bytes_remaining -= 128
-        h = compress(h, chunk, util.int2byte_array(bytes_compressed), False)
+        h = compress(h, chunk, util.int2bin_str(bytes_compressed), False)
 
     chunk = M[bytes_compressed:]
     bytes_compressed = bytes_compressed + bytes_remaining
     chunk = util.pad(chunk, 128)
-    h = compress(h, chunk, util.int2byte_array(bytes_compressed), True)
+    h = compress(h, chunk, util.int2bin_str(bytes_compressed), True)
 
     return h[:hash_len-1]
 
@@ -61,7 +61,7 @@ def compress(h, m=[], t=b'0' * 128, is_last_bloc=False):
     V[13] = util.xor_bytes(V[12], t[:63])
 
     if is_last_bloc:
-        V[14] = util.xor_bytes(V[14], util.int2byte_array(2**64))
+        V[14] = util.xor_bytes(V[14], util.int2bin_str(2**64))
 
     for i in range(0, 12):
         s = sigma[i % 10]

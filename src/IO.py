@@ -3,9 +3,8 @@ from random import getrandbits
 
 
 # function that rename a file
-# input0 = str
-# input1 = boolean
-# output = nothing
+# path_fichier = str
+# option_remove_encrypt_extension = boolean
 def rename_file(path_fichier, option_remove_encrypt_extension):
     rep = path_fichier.split("/")
     fichier = rep[len(rep) - 1]
@@ -21,6 +20,9 @@ def rename_file(path_fichier, option_remove_encrypt_extension):
     os.rename(path_fichier, new_fichier)
 
 
+# print key len and hexa key to the user
+# key_len = int
+# key = str
 def print_key(key_len, key):
     print("Voici votre clé symétrique sur ", key_len, "bits :",
           "\t\n######################################\t\n",
@@ -29,8 +31,8 @@ def print_key(key_len, key):
 
 
 # function that read the key in a file
-# input = str
-# output = str
+# fichier = str
+# data = str
 def readkey(fichier):
     with open(fichier, 'r') as rfile:
         data = rfile.read()
@@ -44,6 +46,7 @@ def read_tab_keys():
 
 
 # Takes a bytearray as input and write it in a file
+# data =
 def write_tab_keys(data):
     with open("../../data/pass.txt", 'w') as kfile:
         kfile.writelines(data)
@@ -51,10 +54,10 @@ def write_tab_keys(data):
 
 # function that read a file with binary method and can do padding if the last word
 # does not match wih the blck length
-# input0 = str
-# input1 = int (256, 512 or 1024)
-# input2 = boolean
-# output = list
+# fichier = str
+# bloc_len = int (256, 512 or 1024)
+# has_padding = boolean
+# datalist = list
 def readfile(fichier, bloc_len, has_padding):
     # file length information
     taille_fich = os.stat(fichier).st_size
@@ -94,53 +97,56 @@ def readfile(fichier, bloc_len, has_padding):
 
 
 # function that write str data in a file
-# input0 = str
-# input1 = str
+# fichier = str
+# data = str
 def writefile(fichier, data):
     with open(fichier, 'w') as wfile:
         wfile.write(data)
 
 
 # function that write a tab of list data into a file
-# input0 = str
-# input1 = tab of list
-def writefilelist(fichier, data):
+# fichier = str
+# data = tab of list
+# bloc_byte_len = int
+def writefilelist(fichier, data, bloc_byte_len):
     with open(fichier, 'wb') as wfile:
         for i in data:
             for j in i:
-                j = j.to_bytes(8, byteorder='little', signed=False)
+                j = j.to_bytes(bloc_byte_len, byteorder='little', signed=False)
                 wfile.write(j)
 
 
 # function that write the tab of list data into a file and remove the padding
-# input0 = str
-# input1 = tab of list
-# input2 = int
-def write_file_list_pad(fichier, data, val_last_data):
+# fichier = str
+# data = tab of list
+# bloc_byte_len = int
+# val_last_data = list
+def write_file_list_pad(fichier, data, bloc_byte_len, val_last_data):
     with open(fichier, 'wb') as wfile:
         # write all the data except the last list in the tab, because there is padding
         for i in range(0, len(data) - 1):
             for j in data[i]:
-                j = j.to_bytes(8, byteorder='little', signed=False)
+                j = j.to_bytes(bloc_byte_len, byteorder='little', signed=False)
                 wfile.write(j)
         # last list
         last_list = data[len(data) - 1]
         # write all except the last int of 64bits (int where the padding is)
         for i in range(0, len(last_list) - 1):
-            wdata = last_list[i].to_bytes(8, byteorder='little', signed=False)
+            wdata = last_list[i].to_bytes(bloc_byte_len, byteorder='little', signed=False)
             wfile.write(wdata)
-        if val_last_data == 8:
-            wdata = last_list[len(last_list) - 1].to_bytes(8, byteorder='little', signed=False)
+        if val_last_data == bloc_byte_len:
+            wdata = last_list[len(last_list) - 1].to_bytes(bloc_byte_len, byteorder='little', signed=False)
             wfile.write(wdata)
         else:
-            wdata = last_list[len(last_list) - 1].to_bytes((8 - val_last_data), byteorder='little', signed=False)
+            wdata = last_list[len(last_list) - 1].to_bytes((bloc_byte_len - val_last_data),
+                                                           byteorder='little', signed=False)
             wfile.write(wdata)
 
 
 # function that organised a list into a tab of list of L_block / 64
-# input0 = list
-# input1 = int (256,512 or 1024)
-# ouput = tab of list
+# data_list = list
+# word_len = int (256,512 or 1024)
+# datalistorder = tab of list
 def organize_data_list(data_list, word_len):
     # permet de mettre les données dans un tableau de list de n mots de 64bits
     datalistorder = []
@@ -150,9 +156,10 @@ def organize_data_list(data_list, word_len):
 
 
 # function that add padding data if the tab of list last list length is not enought
-# input0 = tab of list
-# input1 = int (256,512 or 1024)
-# output = tab of list
+# datalistorder = tab of list
+# ciph_bloc_len = int (256,512 or 1024)
+# len_bloc = int
+# datalistorder = tab of list
 def ajout_padding(datalistorder, ciph_bloc_len, len_bloc):
     len_bloc_bytes = int(len_bloc / 8)
     last_list = datalistorder[len(datalistorder) - 1]
@@ -194,9 +201,10 @@ def ajout_padding(datalistorder, ciph_bloc_len, len_bloc):
 
 
 # function that remove padding information in a list
-# input0 = tab of list
-# input1 = int (256, 512 or 1024)
-# output = tab of list
+# data = tab of list
+# ciph_bloc_len = int (256, 512 or 1024)
+# len_bloc = int
+# data = tab of list
 def remove_padding_list(data, ciph_bloc_len, len_bloc):
     len_bloc_bytes = int(len_bloc / 8)
     # last list of the tab contains the padding
@@ -214,9 +222,10 @@ def remove_padding_list(data, ciph_bloc_len, len_bloc):
 
 
 # function that remove padding of an int in a list
-# input0 = tab of list
-# input1 = int (256, 512 or 1024)
-# output = tab of list
+# data = tab of list
+# bloc_len = int (256, 512 or 1024)
+# data = tab of list
+# pad_len = int
 def remove_padding_data(data, bloc_len):
     bloc_byte_len = int(bloc_len / 8)
     pad_list = data[len(data) - 1]

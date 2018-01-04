@@ -12,9 +12,9 @@ primes = get_primes()
 
 
 # function that calculate the PGCD between 2 int
-# input0 = int
-# input1 = int
-# ouput = int
+# a = int
+# b = int
+# pgcd(b, r) = int
 def pgcd(a, b):
     if b == 0:
         return a
@@ -24,8 +24,8 @@ def pgcd(a, b):
 
 
 # function that factorize an int
-# input = int
-# output = list of int
+# n = int
+# factors = list of int
 def factorize(n):
     factors = []
     i = 2
@@ -48,15 +48,15 @@ def trial_division(n, B=1000):
     if n == 2:
         return False
 
-    isDivisible = False
+    is_divisible = False
     for p in primes:
         if p > B:
             break
         if n % p == 0 and n != p:
-            isDivisible = True
+            is_divisible = True
             break
 
-    return isDivisible
+    return is_divisible
 
 
 # Rabin-Miller primality test, use in big prime number generation
@@ -64,19 +64,19 @@ def trial_division(n, B=1000):
 # input1 = int
 # ouput = boolean (true or false)
 def rabin_miller(n, t = 7):
-    isPrime = True
+    is_prime = True
     if n < 6:
-        return [not isPrime, not isPrime, isPrime, isPrime, not isPrime, isPrime][n]
+        return [not is_prime, not is_prime, is_prime, is_prime, not is_prime, is_prime][n]
     elif not n & 1:
-        return not isPrime
+        return not is_prime
 
     def check(a, s, r, n):
         x = pow(a, r, n)
         if x == 1:
-            return isPrime
+            return is_prime
         for i in range(s-1):
             if x == n - 1:
-                return isPrime
+                return is_prime
             x = pow(x, 2, n)
         return x == n-1
 
@@ -89,9 +89,9 @@ def rabin_miller(n, t = 7):
     for i in range(t):
         a = SystemRandom.choice(2, n-1)
         if not check(a, s, r, n):
-            return not isPrime
+            return not is_prime
 
-    return isPrime
+    return is_prime
 
 
 def probable_prime(k, B=1000):
@@ -111,7 +111,7 @@ def probable_prime(k, B=1000):
 
 def safe_prime(k):
     success = False
-    r, q = 0, 0
+    r, q, p = 0, 0, 0
     while not success:
         q = probable_prime(k - 1)
         # We try to find p = 2 * R * q + 1 1000 times and if it fails we change q
