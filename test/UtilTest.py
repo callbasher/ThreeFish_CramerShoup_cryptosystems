@@ -46,7 +46,7 @@ def test_int2byte():
         output1.append(i)
     p = "".join(output1)
     p = str(p)
-    assert p == int2byte_array(b)
+    assert p == int2bin_str(b)
 
 
 # Todo : Same comment as above !!
