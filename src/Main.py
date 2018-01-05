@@ -1,12 +1,12 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
-from src.Menu import *
+import src.Menu as Menu
 
 
 def main():
-    x = show()
-    apply(x)
+    x = Menu.show()
+    Menu.apply(x)
 
 
 if __name__ == "__main__":
