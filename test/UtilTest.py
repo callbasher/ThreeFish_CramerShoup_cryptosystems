@@ -3,6 +3,7 @@
 
 from src.Util import *
 from random import getrandbits
+import src.ThreeFish as Tf
 
 
 def test_encode_decode_int_list():
@@ -37,3 +38,9 @@ def test_ROTD_ROTG():
     rg = rotate_left(bin(a)[2:], 49)
     rd = rotate_right(bin(rg)[2:], 49)
     assert a == rd
+
+def test_decipher_key():
+    key, keyuser = Tf.keygen(256)
+    c = cipher_key("pass", key)
+    d = decipher_key("pass", c)
+    assert key == d
