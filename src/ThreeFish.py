@@ -13,11 +13,11 @@ C = 0x1bd11bdaa9fc1a22
 R = 49
 
 
-# function that is apply when the user chose the option 1 in the menu
-# file_data_list = tab of list of int
-# mode = int
-# key_len = int
-# bloc_len = int
+# Is apply when the user chose the option 1 in the menu which is correspond to ThreeFish cipher
+# input :
+#   file_data_list = 2D array of int
+#   mode = int
+#   key_len = int
 # output = tab of list of int
 def threefish_chiffrement(file_data_list, mode, key_len):
     key, keyuser = keygen(key_len)
@@ -26,7 +26,7 @@ def threefish_chiffrement(file_data_list, mode, key_len):
 
     # Todo : écrire la key user dans un fichier texte dans le même répertoire que le fichier qui va être chiffré
 
-    padded_file = IO.ajout_padding(file_data_list, key_len, 64)
+    padded_file = Util.ajout_padding(file_data_list, key_len, 64)
 
     if mode == 1:
         return ecb_threefish_cipher(padded_file, tab_key)
@@ -34,13 +34,14 @@ def threefish_chiffrement(file_data_list, mode, key_len):
         return cbc_threefish_cipher(padded_file, tab_key, key_len)
 
 
-# function tha is apply when the user chose the option 2 in the menu
-# ciph_data_list = tab of list of int
-# mode = int
-# key_len = int
-# bloc_len = int
-# file_data = tab of list of int
-# valeur_pad = int
+# Is apply when the user chose the option 2 in the menu which is correspond to ThreeFish decipher
+# ciph_data_list = 2D array of int
+#   mode = int
+#   key_len = int
+#   bloc_len = int
+# output :
+#   file_data = 2D array of int
+#   valeur_pad = int
 def threefish_dechiffrement(ciph_data_list, mode, key_len, bloc_len):
     # todo : faire une fonction qui va lire la clé sym et généré des clés avec keygenturn
     key = "ToDo"
@@ -50,17 +51,19 @@ def threefish_dechiffrement(ciph_data_list, mode, key_len, bloc_len):
         deciph_data = ecb_threefish_decipher(ciph_data_list, tab_key)
     else:
         deciph_data = cbc_threefish_decipher(ciph_data_list, tab_key, key_len)
-
-    data_list = IO.remove_padding_list(deciph_data, key_len, bloc_len)
-    file_data, valeur_pad = IO.remove_padding_data(data_list, bloc_len)
+    data_list = Util.remove_padding_list(deciph_data, key_len, bloc_len)
+    file_data, valeur_pad = Util.remove_padding_data(data_list, bloc_len)
 
     return file_data, valeur_pad
 
 
-# function that generate a random key
-# key_len = int that is 256, 512 or 1024
-# key = list of int (key)
-# keyuser = keyuser is the key in hexadecimal that we print to the user
+# Generate a random key that will be send to keygenturn function
+# to generate 20 keys that will be use to cipher in ECB and CBC functions
+# input :
+#   key_len = int that is 256, 512 or 1024
+# output :
+#   key = list of int
+#   keyuser = keyuser is the key in hexadecimal that we print to the user
 def keygen(key_len):
     key = []
     keyuser = ""
@@ -84,9 +87,11 @@ def keygen(key_len):
     return key, keyuser
 
 
-# function that generate 20 keys based on the random key generate with the function keygen
-# key = list of int
-# keys = tab of list of int
+# Generate 20 keys based on the random key generate with the function keygen
+# input :
+#   key = list of int
+# output :
+#   keys = 2D array of int
 def keygenturn(key):
     n = len(key) - 1
     mod = 2**64
@@ -121,9 +126,11 @@ def keygenturn(key):
     return keys
 
 
-# function that mix data
-# datalist = list of int
-# datalistmix = list of int
+# mix the data that is send from ciphers functions
+# input :
+#   datalist = list of int
+# output :
+#   datalistmix = list of int
 def mixcolumn(datalist):
     # according to the block length we do 2, 4 or 8 times the mix
     datalistmix = []
@@ -140,9 +147,11 @@ def mixcolumn(datalist):
     return datalistmix
 
 
-# function that unmix data
-# datalist = list of int
-# datalist_unmix = list of int
+# Unmix the data send from the decipher functions
+# input :
+#   datalist = list of int
+# output :
+#   datalist_unmix = list of int
 def inv_mixcolumn(datalist):
     # according to the block length we do 2, 4 or 8 times the mix
     datalist_unmix = []
@@ -156,17 +165,21 @@ def inv_mixcolumn(datalist):
     return datalist_unmix
 
 
-# function that permute data
-# n = list of int
-# n = list of int
+# Permute the data send from cipher and decipher functions
+# input :
+#   n = list of int
+# output :
+#   n = list of int
 def permute(n):
     return list(reversed(n))
 
 
-# function that do 76 tours for cipher or decipher
-# data_list = tab of list of int
-# tabkeys = tab of list of int
-# j = tab of list of int
+# Do 76 tours for cipher data (use in ecb_threefish_cipher and in cbc_threefish_cipher)
+# input :
+#   data_list = list of int
+#   tabkeys = list of int
+# output :
+#   data_list = list of int
 def cipher_tour(data_list, tabkeys):
     for k in range(0, 19):
         data_list = Arithmod.add_list_64bits(data_list, tabkeys[k])
@@ -176,10 +189,12 @@ def cipher_tour(data_list, tabkeys):
     return data_list
 
 
-# function that do 76 tours for cipher or decipher
-# data_list = tab of list of int
-# tabkeys = tab of list of int
-# input = tab of list of int
+# Do 76 tours for decipher data (use in ecb_threefish_decipher and in cbc_threefish_decipher)
+# input :
+#   data_list = list of int
+#   tabkeys = list of int
+# output :
+#   data_list = list of int
 def decipher_tour(data_list, tabkeys):
     counter = 18
     for k in range(0, 19):
@@ -191,10 +206,12 @@ def decipher_tour(data_list, tabkeys):
     return data_list
 
 
-# function that do ECB threefish encryption
-# datalist = tab of list of int
-# tabkeys = tab of list of int
-# encrypt_list = tab of list of int
+# Do ECB threefish cipher
+# input :
+#   datalist = 2D array of int
+#   tabkeys = 2D array of int
+# output :
+#   encrypt_list = 2D array of int
 def ecb_threefish_cipher(datalist, tabkeys):
     encryp_list = []
     for j in datalist:
@@ -204,10 +221,12 @@ def ecb_threefish_cipher(datalist, tabkeys):
     return encryp_list
 
 
-# function that do ECB threefish decipherment
-# datalist = tab of list of int
-# tabkeys = tab of list of int
-# decrypt_list = tab of list of int
+# Do ECB threefish decipher
+# input :
+#   datalist = 2D array of int
+#   tabkeys = 2D array of int
+# output :
+#   decrypt_list = 2D array of int
 def ecb_threefish_decipher(datalist, tabkeys):
     decrypt_list = []
     for j in datalist:
@@ -217,11 +236,13 @@ def ecb_threefish_decipher(datalist, tabkeys):
     return decrypt_list
 
 
-# function that do CBC threefish encryption
-# datalist = tab of list of int
-# tabkeys = tab of list of int
-# bloc_len = int
-# encrypt_list = tab of list of int
+# Do CBC threefish cipher
+# input :
+#   datalist = 2D array of int
+#   tabkeys = 2D array of int
+#   bloc_len = int
+# output :
+#   encrypt_list = 2D array of int
 def cbc_threefish_cipher(datalist, tabkeys, bloc_len):
     iv = init(bloc_len)
     encryp_list = []
@@ -241,11 +262,13 @@ def cbc_threefish_cipher(datalist, tabkeys, bloc_len):
     return encryp_list
 
 
-# function that do CBC threefish decipherment
-# datalist = tab of list of int
-# tabkeys = tab of list of int
-# bloc_len = int
-# decrypt_list = tab of list of int
+# Do CBC threefish decipher
+# input :
+#   datalist = 2D array of int
+#   tabkeys = 2D array of int
+#   bloc_len = int
+# output :
+#   decrypt_list = tab of list of int
 def cbc_threefish_decipher(datalist, tabkeys, bloc_len):
     iv = init(bloc_len)
     decrypt_list = []
@@ -259,9 +282,12 @@ def cbc_threefish_decipher(datalist, tabkeys, bloc_len):
     return decrypt_list
 
 
-# function that return an IV based on the length of the block
-# key_len = int (256, 512 or 1024)
-# IV_* = list of int
+# Return an IV based on the length of the block
+# The IV is use in cbc_threefish_cipher and decipher functions to cipher and decipher data
+# input :
+#   key_len = int (256, 512 or 1024)
+# output :
+#   IV_* = list of int
 def init(key_len):
     iv_256 = [11939804896947846136, 4219065746052997657, 14289511192216538576, 6129295191351922843]
     iv_512 = [14021392340165679391, 10713825714517858312, 16678454614520143940, 2176821685655837471,

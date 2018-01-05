@@ -3,6 +3,7 @@
 
 import src.ThreeFish as tf
 import src.IO as io
+import src.Util as Util
 
 
 def show():
@@ -40,9 +41,9 @@ def apply(x):
         if x == 1:
             io.rename_file(file_path, 1)
             file_data = io.readfile(file_path, bloc_len, 1)
-            file_data_list = io.organize_data_list(file_data, word_len)
+            file_data_list = Util.organize_data_list(file_data, word_len)
 
-            encrypted_file = tf.threefish_chiffrement(file_data_list, mode, key_len, bloc_len)
+            encrypted_file = tf.threefish_chiffrement(file_data_list, mode, key_len)
 
             io.writefilelist(file_path, encrypted_file, bloc_byte_len)
             io.rename_file(file_path, 0)
@@ -52,7 +53,7 @@ def apply(x):
         elif x == 2:
             io.rename_file(file_path, 1)
             ciph_data = io.readfile(file_path, bloc_len, 0)
-            ciph_data_list = io.organize_data_list(ciph_data, word_len)
+            ciph_data_list = Util.organize_data_list(ciph_data, word_len)
 
             clear_file_data, valeur_pad = tf.threefish_dechiffrement(ciph_data_list, mode, key_len, bloc_len)
 

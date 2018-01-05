@@ -30,6 +30,20 @@ def cipher_key(password, key):
     return Tf.cbc_threefish_cipher(formatted_key, turn_keys, 512)
 
 
+# Function that decipher a key with CBC method
+# Inputs:
+#   password = string that will serve as key in the cipher
+#   key = a 2D tab of ints to decipher with cbc
+# Outputs:
+#   The key decoded with CBC
+def decipher_key(password, formatted_key):
+    pass_hash = Hh.blake_hash(password, 64)
+    formatted_hash = encode_int_list([pass_hash])
+    turn_keys = Tf.keygenturn(formatted_hash)
+    deformatted_key = deformat_key(formatted_key)
+    return Tf.cbc_threefish_decipher(deformatted_key, turn_keys, 512)
+
+
 # Function that format a key into an organized list of 8 words of 64 bits
 # It serves to format a key before being ciphered with cbc
 def format_key(key):
@@ -129,11 +143,13 @@ def remove_padding_listv2(data, num_words, word_len):
     return data
 
 
-# function that remove padding of an int in a list
-# data = tab of list
-# bloc_len = int (256, 512 or 1024)
-# data = tab of list
-# pad_len = int
+# Remove padding of an int in a list
+# input :
+#   data = 2D array of int
+#   bloc_len = int (256, 512 or 1024)
+# output :
+#   data = 2D array of int
+#   pad_len = int
 def remove_padding_data(data, bloc_len):
     bloc_byte_len = int(bloc_len / 8)
     pad_list = data[len(data) - 1]
@@ -150,11 +166,13 @@ def remove_padding_data(data, bloc_len):
     return data, pad_len
 
 
-# function that add padding data if the tab of list last list length is not enought
-# datalistorder = tab of list
-# ciph_bloc_len = int (256,512 or 1024)
-# len_bloc = int
-# datalistorder = tab of list
+# Add padding data if the 2D array of int last list length is not enought
+# input :
+#   datalistorder = 2D array of int
+#   ciph_bloc_len = int (256,512 or 1024)
+#   len_bloc = int
+# output :
+#   datalistorder = 2D array of int
 def ajout_padding(datalistorder, ciph_bloc_len, len_bloc):
     last_list = datalistorder[len(datalistorder) - 1]
     len_bloc_bytes = int(len_bloc / 8)
@@ -192,11 +210,13 @@ def ajout_padding(datalistorder, ciph_bloc_len, len_bloc):
     return datalistorder
 
 
-# function that remove padding information in a list
-# data = tab of list
-# ciph_bloc_len = int (256, 512 or 1024)
-# len_bloc = int
-# data = tab of list
+# removes padding of an organized list. It reverses the operation of "ajout_padding"
+# intput :
+#   data = 2D array of int
+#   ciph_bloc_len = int (256, 512 or 1024)
+#   len_bloc = int
+# output :
+#   data = 2D array of int
 def remove_padding_list(data, ciph_bloc_len, len_bloc):
     len_bloc_bytes = int(len_bloc / 8)
     # last list of the tab contains the padding
@@ -320,6 +340,11 @@ def decode_int_list(formatted_list):
     return int_list
 
 
+# Add padding information of a bin_str value
+# do a left padding
+# input :
+#   bin_str = bin_str
+#   size = int
 def pad_bin(bin_str, size):
     length = len(bin_str)
     if length < size:
@@ -327,20 +352,22 @@ def pad_bin(bin_str, size):
     return bin_str
 
 
-# function that do a right rotation
-# bin_str = list of string
-# rot = int
-# bin_str2int(rot_array) = int
+# Do a right rotation of a bin_str value
+# input :
+#   bin_str = list of string
+#   rot = int
+# output = int
 def rotate_right(bin_str, rot):
     array_len = len(bin_str)
     rot_array = bin_str[(array_len - rot):array_len] + bin_str[0:(array_len - rot)]
     return int(rot_array, 2)
 
 
-# function that do a left rotation
-# bin_str = list of string
-# rot = int
-# bin_str2int(rot_array) = int
+# Do a left rotation of a bin_str value
+# input :
+#   bin_str = list of string
+#   rot = int
+# output = int
 def rotate_left(bin_str, rot):
     array_len = len(bin_str)
     rot_array = bin_str[rot:array_len] + bin_str[0:rot]

@@ -4,9 +4,12 @@
 import os
 
 
-# function that rename a file
-# path_fichier = str
-# option_remove_encrypt_extension = boolean
+# Rename a file after it was been cipher or before it will be decipher
+# basically rename a file with ".encrypt" extension when it is a cipher text
+# or remove ".encrypt" extension if the file is decipher
+# input :
+#   path_fichier = str
+#   option_remove_encrypt_extension = boolean
 def rename_file(path_fichier, option_remove_encrypt_extension):
     rep = path_fichier.split("/")
     fichier = rep[len(rep) - 1]
@@ -22,12 +25,15 @@ def rename_file(path_fichier, option_remove_encrypt_extension):
     os.rename(path_fichier, new_fichier)
 
 
-# function that read a file with binary method and can do padding if the last word
-# does not match wih the blck length
-# fichier = str
-# bloc_len = int (256, 512 or 1024)
-# has_padding = boolean
-# datalist = list
+# Read a file with binary method and can do padding if the last word
+# does not match wih the bloc length
+# convert the binary into int value
+# input :
+#   fichier = str
+#   bloc_len = int (256, 512 or 1024)
+#   has_padding = boolean
+# output :
+#   datalist = list
 def readfile(fichier, bloc_len, has_padding):
     taille_fich = os.stat(fichier).st_size
     bloc_bytes_len = int(bloc_len / 8)
@@ -61,18 +67,21 @@ def readfile(fichier, bloc_len, has_padding):
     return datalist
 
 
-# function that write str data in a file
-# fichier = str
-# data = str
+# Write str data in a file
+# input :
+#   fichier = str
+#   data = str
 def writefile(fichier, data):
     with open(fichier, 'w') as wfile:
         wfile.write(data)
 
 
-# function that write a tab of list data into a file
-# fichier = str
-# data = tab of list
-# bloc_byte_len = int
+# Write a 2D array of int data into a file
+# the int data are convert into binary data and write them in the file
+# input :
+#   fichier = str
+#   data = tab of list
+#   bloc_byte_len = int
 def writefilelist(fichier, data, bloc_byte_len):
     with open(fichier, 'wb') as wfile:
         for i in data:
@@ -81,11 +90,12 @@ def writefilelist(fichier, data, bloc_byte_len):
                 wfile.write(j)
 
 
-# function that write the tab of list data into a file and remove the padding
-# fichier = str
-# data = tab of list
-# bloc_byte_len = int
-# val_last_data = list
+# Write the 2D array of int data into a file and remove the padding of the last int
+# input :
+#   fichier = str
+#   data = tab of list
+#   bloc_byte_len = int
+#   val_last_data = list
 def write_file_list_pad(fichier, data, bloc_byte_len, val_last_data):
     with open(fichier, 'wb') as wfile:
         # write all the data except the last list in the tab, because there is padding

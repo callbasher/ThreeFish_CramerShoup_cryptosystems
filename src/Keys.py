@@ -1,7 +1,9 @@
 
 # function that read the key in a file
-# fichier = str
-# data = str
+# input :
+#   fichier = str
+# output :
+#   data = str
 def readkey(fichier):
     with open(fichier, 'r') as rfile:
         data = rfile.read()
