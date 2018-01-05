@@ -44,7 +44,7 @@ def threefish_chiffrement(file_data_list, mode, key_len):
 #   valeur_pad = int
 def threefish_dechiffrement(ciph_data_list, mode, key_len, bloc_len):
     # todo : faire une fonction qui va lire la clé sym et généré des clés avec keygenturn
-    key = "ToDo"
+    key = "Todo"
     tab_key = keygenturn(key)
 
     if mode == 1:

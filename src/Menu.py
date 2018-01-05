@@ -13,7 +13,7 @@ def show():
     while x < 0 or x > 6:
         print("\nMenu :\n\t")
         print(
-            "1. Chiffrement symétrique ThreeFish\n\t"
+            "\t1. Chiffrement symétrique ThreeFish\n\t"
             "2. Déchiffrement sysmétrique ThreeFish\n\t"
             "3. Chiffrement de Cramer-Shoup\n\t"
             "4. Déchiffrement Cramer-Shoup\n\t"
@@ -33,13 +33,12 @@ def apply(x):
 
         key_len = 0
         while (key_len != 256) and (key_len != 512) and (key_len != 1024):
-            bloc_len = int(input("Choisir la taille de clé à utiliser pour le chiffrement (256/512/1024) : "))
+            key_len = int(input("Choisir la taille de clé à utiliser pour le chiffrement (256/512/1024) : "))
 
         file_path = input("Veuillez entrer le chemin du fichier à chiffrer : ")
         word_len = int(key_len / 64)
 
         if x == 1:
-            io.rename_file(file_path, 1)
             file_data = io.readfile(file_path, bloc_len, 1)
             file_data_list = Util.organize_data_list(file_data, word_len)
 
@@ -51,13 +50,13 @@ def apply(x):
             print("Chiffrement terminé.")
 
         elif x == 2:
-            io.rename_file(file_path, 1)
             ciph_data = io.readfile(file_path, bloc_len, 0)
             ciph_data_list = Util.organize_data_list(ciph_data, word_len)
 
             clear_file_data, valeur_pad = tf.threefish_dechiffrement(ciph_data_list, mode, key_len, bloc_len)
 
             io.write_file_list_pad(file_path, clear_file_data, bloc_byte_len, valeur_pad)
+            io.rename_file(file_path, 1)
 
             print("Déchiffrement terminé.")
 
