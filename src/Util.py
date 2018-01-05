@@ -27,7 +27,7 @@ def cipher_key(password, key):
     formatted_hash = encode_int_list([pass_hash])
     turn_keys = Tf.keygenturn(formatted_hash)
     formatted_key = format_key(key)
-    return Tf.cbc_threefish_cipher(formatted_key, turn_keys, 512)
+    return Tf.ecb_threefish_cipher(formatted_key, turn_keys)
 
 
 # Function that decipher a key with CBC method
@@ -36,12 +36,12 @@ def cipher_key(password, key):
 #   key = a 2D tab of ints to decipher with cbc
 # Outputs:
 #   The key decoded with CBC
-def decipher_key(password, formatted_key):
+def decipher_key(password, ciphered_key):
     pass_hash = Hh.blake_hash(password, 64)
     formatted_hash = encode_int_list([pass_hash])
     turn_keys = Tf.keygenturn(formatted_hash)
-    deformatted_key = deformat_key(formatted_key)
-    return Tf.cbc_threefish_decipher(deformatted_key, turn_keys, 512)
+    formatted_key = Tf.ecb_threefish_decipher(ciphered_key, turn_keys)
+    return deformat_key(formatted_key)
 
 
 # Function that format a key into an organized list of 8 words of 64 bits

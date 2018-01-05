@@ -39,6 +39,7 @@ def test_ROTD_ROTG():
     rd = rotate_right(bin(rg)[2:], 49)
     assert a == rd
 
+
 def test_decipher_key():
     key, keyuser = Tf.keygen(256)
     c = cipher_key("pass", key)
