@@ -2,72 +2,38 @@
 # -*- coding: utf-8 -*-
 
 from src.Util import *
+from random import getrandbits
 
 
-def test_xor_bytes():
-    a = "0101111101011110011001001110111011001111000101101011100110000010"
-    b = "1101111101011110011001001110111011001111000101101011100110000010"
-    c = "1000000000000000000000000000000000000000000000000000000000000000"
-    assert xor_bytes(a, b) == c
+def test_encode_decode_int_list():
+    a = 2**64 - 1
+    i = getrandbits(245)
+    t = [0, 1, a, 1, i, 0,  a, i, 1]
+    ft = encode_int_list(t)
+    tt = decode_int_list(ft)
+    assert t == tt
 
 
-def test_add_64bits():
-    a = "0000100100101001001101101011100111110111001111001110001100110110"
-    b = "1000010100111111100100111001011000011011110011001011101010000001"
-    c = "1000111001101000110010100101000000010011000010011001110110110111"
-    assert add_64bits(a, b) == c
+def test_format_deformat_key():
+    key = [234345543543, 5676746745, 23432, 34543, 34345456576786534, 4565676554334]
+    fk = format_key(key)
+    kk = deformat_key(fk)
+    assert key == kk
 
 
-def test_subtract_64bits():
-    a = "0000100100101001001101101011100111110111001111001110001100110110"
-    b = "1000010100111111100100111001011000011011110011001011101010000001"
-    c = "1000111001101000110010100101000000010011000010011001110110110111"
-    assert subtract_64bits(c, b) == a
+def test_pad_bin():
+    a = '1'
+    expected = '0001'
+    assert expected == pad_bin(a, 4)
 
 
-# Todo : Why are you testing your function bu just redoing the same ???
-# You should init an input and its corresponding dsiered output directly
-# like : in = 31, expected_out = "1F"
-# return expected_out == int2byte_array(in)
-def test_int2byte():
-    a = 6869182828364843105
-    b = 6869182828364843105
-    output = []
-    output1 = []
-    intByte = 8
-    mask = 0xFF
-
-    for i in range(0, intByte):
-        output.insert(0, a & mask)
-        a >>= 8
-
-    for i in output:
-        i = bin(i)[2:].zfill(8)
-        output1.append(i)
-    p = "".join(output1)
-    p = str(p)
-    assert p == int2bin_str(b)
+def test_pad_bin_no_pad():
+    a = 'O11O'
+    assert a == pad_bin(a, 4)
 
 
-# Todo : Same comment as above !!
-def test_xor2list():
-    liste1 = [18, 24, 52, 96]
-    liste2 = [18, 24, 52, 96]
-    result = xor_lists(liste1, liste2)
-    m = [0, 0, 0, 0]
-    begin = xor_lists(m, liste2)
-    assert m == result
-    assert begin == liste1
-
-
-# Todo : Same comment as above !!
-# Just do a rotg to x bytes and a rotd to x bytes and verify if the input stays the same
 def test_ROTD_ROTG():
-    a = "1101111101011110011001001110111011001111000101101011100110000010"
-    x = bin_str2int(a)
-    for i in range(76):
-        b = rotate_right(a)
-    b = bin_str2int(b)
-    for i in range(76):
-        c = rotate_left(b)
-    assert str(c) == str(x)
+    a = 12345678987654321
+    rg = rotate_left(bin(a)[2:], 49)
+    rd = rotate_right(bin(rg)[2:], 49)
+    assert a == rd
