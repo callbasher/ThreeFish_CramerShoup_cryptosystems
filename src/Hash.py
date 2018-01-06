@@ -36,7 +36,7 @@ def blake_hash(m, hash_len, key=""):
     m_len = len(m)
     key_len = len(key)
 
-    h = IV
+    h = IV.copy()
     init_mix = int("0x0101" + hex(key_len)[2:] + hex(hash_len)[2:], 16)
     h[0] = h[0] ^ init_mix
 
@@ -52,7 +52,7 @@ def blake_hash(m, hash_len, key=""):
         bytes_remaining += 128
 
     while bytes_remaining > 128:
-        chunk = m[bytes_compressed:bytes_compressed+127]
+        chunk = m[bytes_compressed:bytes_compressed+128]
         bytes_compressed += 128
         bytes_remaining -= 128
         t = bytes_compressed.to_bytes(128, byteorder='big', signed=False)
@@ -63,18 +63,16 @@ def blake_hash(m, hash_len, key=""):
     chunk = chunk.zfill(128)
     t = bytes_compressed.to_bytes(128, byteorder='big', signed=False)
     h = compress(h, chunk, t, True)
-
+    print(len(h))
     h_bytes = b''
-    i = 0
-    while len(h_bytes) < hash_len and i < 8:
-        h_bytes += h[i].to_bytes(8, byteorder='big', signed=False)
-        i += 1
+    for c in h:
+        h_bytes += c.to_bytes(8, byteorder='big', signed=False)
 
     return int.from_bytes(h_bytes[:hash_len], byteorder='big', signed=False)
 
 
 def compress(h, chunk, t=b'0' * 128, is_last_bloc=False):
-    v = h
+    v = h.copy()
     v.extend(IV)
     lo_bits = int.from_bytes(t[64:], byteorder='big', signed=False)
     hi_bits = int.from_bytes(t[:63], byteorder='big', signed=False)

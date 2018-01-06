@@ -2,9 +2,14 @@
 # -*- coding: utf-8 -*-
 
 import src.Menu as Menu
+import src.Util as Util
+import src.ThreeFish as Tf
 
 
 def main():
+    key, keyuser = Tf.keygen(256)
+    c = Util.cipher_key("pass", key)
+    d = Util.decipher_key("pass", c)
     x = Menu.show()
     Menu.apply(x)
 

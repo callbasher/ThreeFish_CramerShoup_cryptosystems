@@ -2,8 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from random import getrandbits
-import src.Hash as Hh
-from src import ThreeFish as Tf
+from src import Hash as Hh, ThreeFish as Tf
 
 
 # print key len and hexa key to the user
@@ -25,8 +24,11 @@ def print_key(key_len, key):
 def cipher_key(password, key):
     pass_hash = Hh.blake_hash(password, 64)
     formatted_hash = encode_int_list([pass_hash])
+    print("f_hash = ", formatted_hash)
     turn_keys = Tf.keygenturn(formatted_hash)
+    print("keys = ", turn_keys)
     formatted_key = format_key(key)
+    print("key = ", formatted_key)
     return Tf.ecb_threefish_cipher(formatted_key, turn_keys)
 
 
@@ -39,8 +41,11 @@ def cipher_key(password, key):
 def decipher_key(password, ciphered_key):
     pass_hash = Hh.blake_hash(password, 64)
     formatted_hash = encode_int_list([pass_hash])
+    print("f_hash = ", formatted_hash)
     turn_keys = Tf.keygenturn(formatted_hash)
+    print("keys = ", turn_keys)
     formatted_key = Tf.ecb_threefish_decipher(ciphered_key, turn_keys)
+    print("key = ", formatted_key)
     return deformat_key(formatted_key)
 
 
@@ -266,13 +271,9 @@ def encode_int_list(int_list):
             # If the int is already 64 bit
             if bloc_len == 64:
                 next_int = int(bloc_bits[start:start+64], 2)
-            # If we don't need to pad
-            elif bloc_len == 63:
-                next_int = int('1' + bloc_bits[start:start+63], 2)
             else:
-                pad_len = 64 - bloc_len - 1
-                pad_bits = pad_bin(bin(getrandbits(pad_len))[2:], pad_len)
-                next_int = int('1' + bloc_bits[start:start+bloc_len] + pad_bits, 2)
+                pad_len = 63 - bloc_len
+                next_int = int('1' + bloc_bits[start:start+bloc_len] + '0' * pad_len, 2)
 
             formatted_list.append(next_int)
 

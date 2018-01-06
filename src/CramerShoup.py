@@ -1,24 +1,41 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
-from random import SystemRandom, randint, seed
+from random import SystemRandom, randint
 import src.Hash as Hh
 import src.IO as IO
 import src.Primes as Pm
-import src.Util as util
+import src.Util as Util
+import src.Conversions as Conv
+import src.ArithMod as Arithmod
 
 
 # The password is hashed to an int.
 # This int correspond to the line in which the encrypted keys will be in the password file.
 # TODO : enable to cipher with an already-existing public key (retrieve the private with the password)
-def apply(fichier, public_key_dest, k = 512, password = "default"):
+def encode_with_file(filepath, keypath):
+    return 0
+
+def encode_no_file(filepath, keypath, k, password):
     private, public = generateKeys(k)
-    write_pv_key(password, private)
-    IO.writefile(public_key_dest, public)
+    cipher_pv = Util.cipher_key(password, private)
+    formatted_pb = Util.encode_int_list(public)
+    IO.writeKey(key_dest, public)
     bloc_list = IO.readfile(fichier, 64, 0)
     crypt_bytes = []
     for b in bloc_list:
         crypt_bytes.append(cipher(b, public))
+    return 0
+
+
+def decode(fichier, password):
+    # retrieve private Key
+    pv_key = retrieve_key(password)
+    file = IO.readfile(fichier, 64, 0)
+    bloc_list = IO.organize_data_list(file, 4)
+    clear = []
+    for b in bloc_list:
+        clear.append(decipher(key, b))
 
 
 # The block is supposed to be an int.
@@ -37,60 +54,28 @@ def cipher(bloc, key):
     return B1, B2, c, v
 
 
-def decode(fichier, password):
-    # retrieve private Key
-    key = retrieve_key(password)
-    file = IO.readfile(fichier, 64, 0)
-    bloc_list = IO.organize_data_list(file, 4)
-    clear = []
-    for b in bloc_list:
-        clear.append(decipher(key, b))
-
-
 def decipher(key, bloc):
     p, x1, x2, y1, y2, w = key[0], key[1], key[2], key[3], key[4], key[5]
     B1, B2, v, c = bloc[0], bloc[1], bloc[2], bloc[3]
 
     # 1 : Validate bloc
     concat = (B1 + B2 + c) % p
-    H = Hh.blake_hash(concat, 64)
+    H = Hh.blake_hash(Conv.int2str(concat), 64)
     By = (pow(B1, y1, p) * pow(B2, y2, p)) % p
     vv = (pow(B1, x1, p) * pow(B2, x2, p) * pow(By, H, p)) % p
     # Compute res only if bloc is validated.
     if vv == v:
-        return (util.inv(pow(B1, w, p), p) * c) % p
-
-
-def write_pv_key(password, key):
-    pv_ciph = sym_cipher(password, key)
-    tab_keys = IO.read_tab_keys()
-    ind = hash_pass(password)
-    tab_keys[ind] = pv_ciph
-    IO.write_tab_keys(tab_keys)
-
-
-def hash_pass(password):
-    passInt = int(Hh.blake_hash(password))
-    seed(passInt)
-    return randint(0, 10000)
-
-
-def retrieve_key(password):
-    tab_keys = IO.read_tab_keys()
-    ind = hash_pass(password)
-    return tab_keys[ind]
-
-
-def sym_cipher(key, m):
-    return key
+        return (Arithmod.inv(pow(B1, w, p), p) * c) % p
 
 
 def find_generator(p, factors):
     b = 1
+    rand = SystemRandom()
     while b == 1:
-        x = SystemRandom.choice(2, p)
+        x = rand.randint(2, p)
         for f in factors:
-            b = pow(x, (p-1) / f, p)
+            exp = (p-1) // f
+            b = pow(x, exp, p)
             if b != 1:
                 break
     return b
@@ -102,9 +87,9 @@ def prime_and_generators(k):
     # we want only the different prime factors not their exponent so we remove duplicates
     # We put q at the end of the list to ensure that smaller factors are tried first
     # in "find_generator" function
-    factors = set(Pm.factorize(r))
-    factors.add(2)
-    factors = list(factors)
+    factors = Pm.factorize(r)
+    factors.append(2)
+    factors = list(set(factors))
     factors.append(q)
 
     alpha1 = find_generator(p, factors)
@@ -117,16 +102,15 @@ def prime_and_generators(k):
 
 def generateKeys(k):
     p, g1, g2 = prime_and_generators(k)
+    rand = SystemRandom()
+    x1 = rand.randint(2, p)
+    x2 = rand.randint(2, p)
+    y1 = rand.randint(2, p)
+    y2 = rand.randint(2, p)
+    w = rand.randint(2, p)
 
-    Zp = range(2, p)
-    x1 = SystemRandom.choice(Zp)
-    x2 = SystemRandom.choice(Zp)
-    y1 = SystemRandom.choice(Zp)
-    y2 = SystemRandom.choice(Zp)
-    w = SystemRandom.choice(Zp)
-
-    X = pow(g1, x1, p) * pow(g2, x2, p)
-    Y = pow(g1, y1, p) * pow(g2, y2, p)
+    X = (pow(g1, x1, p) * pow(g2, x2, p)) % p
+    Y = (pow(g1, y1, p) * pow(g2, y2, p)) % p
     W = pow(g1, w, p)
 
     private_key = [p, x1, x2, y1, y2, w]

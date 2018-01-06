@@ -35,11 +35,28 @@ def test_inv_ECB():
     assert liste1 == b
 
 
-def test_CBC():
-    key, keyuser = keygen(256)
+def test_keygenturn():
+    k, keyuser = keygen(256)
+
+    t1 = keygenturn(k)
+    t2 = keygenturn(k)
+
+    assert t1 == t2
+
+
+def test_ecb():
+    h = [0x6A09E667F3BCC908,
+         0xBB67AE8584CAA73B,
+         0x3C6EF372FE94F82B,
+         0xA54FF53A5F1D36F1,
+         0x510E527FADE682D1,
+         0x9B05688C2B3E6C1F,
+         0x1F83D9ABFB41BD6B,
+         0x5BE0CD19137E2179]
+    key, keyuser = keygen(512)
     turn_keys = keygenturn(key)
-    a = [[18, 24, 52, 96], [65, 98, 98, 751], [652, 64, 894, 64], [64, 654, 65, 651]]
-    c = cbc_threefish_cipher(a, turn_keys, 256)
-    d = cbc_threefish_decipher(c, turn_keys, 256)
+    a = [h, permute(h)]
+    c = ecb_threefish_cipher(a, turn_keys)
+    d = ecb_threefish_decipher(c, turn_keys)
 
     assert a == d
