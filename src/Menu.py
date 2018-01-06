@@ -12,7 +12,7 @@ def show():
     print("\t\t\tProjet GS15 - A17 - ThreeFish - CramerShoup")
     x = -1
     while x < 0 or x > 6:
-        print("\nMenu :\n\t")
+        print("\nMenu :\n\t\t")
         print(
             "1. Chiffrement symétrique ThreeFish\n\t"
             "2. Déchiffrement sysmétrique ThreeFish\n\t"
@@ -40,25 +40,20 @@ def apply(x):
         word_len_bytes = int(word_len / 8)
 
         if x == 1:
-            IO.rename_file(file_path, 1)
             file_data = IO.readfile(file_path, word_len, 1)
             file_data_list = Util.organize_data_list(file_data, num_words)
-
             encrypted_file = Tf.threefish_chiffrement(file_data_list, mode, key_len)
-
             IO.writefilelist(file_path, encrypted_file, word_len_bytes)
             IO.rename_file(file_path, 0)
 
             print("Chiffrement terminé.")
 
         elif x == 2:
-            IO.rename_file(file_path, 1)
             ciph_data = IO.readfile(file_path, word_len, 0)
-            ciph_data_list = Util.organize_data_list(ciph_data, num_words)
-
+            ciph_data_list = Util.organize_data_list(ciph_data, word_len)
             clear_file_data, valeur_pad = Tf.threefish_dechiffrement(ciph_data_list, mode, key_len, word_len)
-
             IO.write_file_list_pad(file_path, clear_file_data, word_len_bytes, valeur_pad)
+            IO.rename_file(file_path, 1)
 
             print("Déchiffrement terminé.")
 
