@@ -12,19 +12,21 @@ tweaks = [tweak0, tweak1, tweak2]
 C = 0x1bd11bdaa9fc1a22
 R = 49
 
-
 # Is apply when the user chose the option 1 in the menu which is correspond to ThreeFish cipher
 # input :
 #   file_data_list = 2D array of int
 #   mode = int
 #   key_len = int
 # output = tab of list of int
-def threefish_chiffrement(file_data_list, mode, key_len):
+def threefish_chiffrement(file_data_list, mode, key_len, passwd_user, file_key):
     key, keyuser = keygen(key_len)
     tab_key = keygenturn(key)
-    Util.print_key(key_len, keyuser)
+    # cipher the key using the password given by the user
+    cipher_key = Util.cipher_key(passwd_user, key)
+    # writing cipher key in the specific file
+    IO.writefilelist(file_key, cipher_key, 8)
 
-    # Todo : écrire la key user dans un fichier texte dans le même répertoire que le fichier qui va être chiffré
+    Util.print_key(key_len, keyuser)
 
     padded_file = Util.ajout_padding(file_data_list, key_len, 64)
 
@@ -42,9 +44,12 @@ def threefish_chiffrement(file_data_list, mode, key_len):
 # output :
 #   file_data = 2D array of int
 #   valeur_pad = int
-def threefish_dechiffrement(ciph_data_list, mode, key_len, bloc_len):
-    # todo : faire une fonction qui va lire la clé sym et généré des clés avec keygenturn
-    key = "Todo"
+def threefish_dechiffrement(ciph_data_list, mode, key_len, bloc_len, passwd_user, file_key):
+    # reading the file where the key is
+    cipher_key_desorganize = IO.readfile(file_key, 64, 0)
+    # organize the data
+    formatted_key = Util.organize_data_list(cipher_key_desorganize, 8)
+    key = Util.decipher_key(passwd_user, formatted_key)
     tab_key = keygenturn(key)
 
     if mode == 1:

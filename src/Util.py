@@ -24,11 +24,8 @@ def print_key(key_len, key):
 def cipher_key(password, key):
     pass_hash = Hh.blake_hash(password, 64)
     formatted_hash = encode_int_list([pass_hash])
-    print("f_hash = ", formatted_hash)
     turn_keys = Tf.keygenturn(formatted_hash)
-    print("keys = ", turn_keys)
     formatted_key = format_key(key)
-    print("key = ", formatted_key)
     return Tf.ecb_threefish_cipher(formatted_key, turn_keys)
 
 
@@ -41,11 +38,8 @@ def cipher_key(password, key):
 def decipher_key(password, ciphered_key):
     pass_hash = Hh.blake_hash(password, 64)
     formatted_hash = encode_int_list([pass_hash])
-    print("f_hash = ", formatted_hash)
     turn_keys = Tf.keygenturn(formatted_hash)
-    print("keys = ", turn_keys)
     formatted_key = Tf.ecb_threefish_decipher(ciphered_key, turn_keys)
-    print("key = ", formatted_key)
     return deformat_key(formatted_key)
 
 

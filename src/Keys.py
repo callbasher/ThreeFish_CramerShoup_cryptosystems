@@ -18,9 +18,10 @@ def read_tab_keys():
 
 # Takes a bytearray as input and write it in a file
 # data =
-def write_tab_keys(data):
-    with open("../../data/pass.txt", 'w') as kfile:
-        kfile.writelines(data)
+def write_tab_keys(fichier, data):
+    with open(fichier, 'w') as kfile:
+        for i in data:
+            kfile.writelines(i)
 
 
 def key_to_hex(key):

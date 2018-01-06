@@ -63,7 +63,6 @@ def blake_hash(m, hash_len, key=""):
     chunk = chunk.zfill(128)
     t = bytes_compressed.to_bytes(128, byteorder='big', signed=False)
     h = compress(h, chunk, t, True)
-    print(len(h))
     h_bytes = b''
     for c in h:
         h_bytes += c.to_bytes(8, byteorder='big', signed=False)

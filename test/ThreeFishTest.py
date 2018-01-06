@@ -3,6 +3,7 @@
 
 from src.ThreeFish import *
 import src.IO as IO
+import src.ArithMod as Ar
 
 
 # test de la fonction permute
@@ -43,6 +44,7 @@ def test_inv_CBC():
     data_org_pad = Util.ajout_padding(data_org, 256, 64)
     c = cbc_threefish_cipher(data_org_pad, all_keys, 256)
     d = cbc_threefish_decipher(c, all_keys, 256)
+    data_org_pad[0] = Ar.subtract_list_64bits(data_org_pad[0], init(256))
     assert d == data_org_pad
 
 def test_keygenturn():

@@ -6,14 +6,13 @@ import src.Util as Util
 import src.ThreeFish as Tf
 import src.CramerShoup as Cs
 
-
 def show():
     print("\nArnaud FOURNIER, Aurélien DIAS\n")
     print("\t\t\tProjet GS15 - A17 - ThreeFish - CramerShoup")
     x = -1
     while x < 0 or x > 6:
-        print("\nMenu :\n\t\t")
-        print(
+        print("\nMenu :")
+        print("\t"
             "1. Chiffrement symétrique ThreeFish\n\t"
             "2. Déchiffrement sysmétrique ThreeFish\n\t"
             "3. Chiffrement de Cramer-Shoup\n\t"
@@ -28,13 +27,18 @@ def apply(x):
     if x < 3:
         mode = 0
         while mode != 1 and mode != 2:
-            mode = int(input("Veuillez choisir votre mode de chiffrement : \n\t1. ECB\n\t2. CBC"))
+            mode = int(input("Veuillez choisir votre mode de (dé)chiffrement : \n\t1. ECB\n\t2. CBC"))
 
         key_len = 0
         while (key_len != 256) and (key_len != 512) and (key_len != 1024):
-            key_len = int(input("Choisir la taille de clé à utiliser pour le chiffrement (256/512/1024) : "))
+            key_len = int(input("Choisir la taille de clé à utiliser pour le (dé)chiffrement (256/512/1024) : "))
 
-        file_path = input("Veuillez entrer le chemin du fichier à chiffrer : ")
+        file_key = input("Choisir un fichier pour stocker / lire votre clé : ")
+
+        passwd_user = input("Choisir un mot de passe pour (dé)chiffrer votre clé : ")
+
+        file_path = input("Veuillez entrer le chemin du fichier à (dé)chiffrer : ")
+
         word_len = 64
         num_words = int(key_len / word_len)
         word_len_bytes = int(word_len / 8)
@@ -42,7 +46,7 @@ def apply(x):
         if x == 1:
             file_data = IO.readfile(file_path, word_len, 1)
             file_data_list = Util.organize_data_list(file_data, num_words)
-            encrypted_file = Tf.threefish_chiffrement(file_data_list, mode, key_len)
+            encrypted_file = Tf.threefish_chiffrement(file_data_list, mode, key_len, passwd_user, file_key)
             IO.writefilelist(file_path, encrypted_file, word_len_bytes)
             IO.rename_file(file_path, 0)
 
@@ -50,8 +54,9 @@ def apply(x):
 
         elif x == 2:
             ciph_data = IO.readfile(file_path, word_len, 0)
-            ciph_data_list = Util.organize_data_list(ciph_data, word_len)
-            clear_file_data, valeur_pad = Tf.threefish_dechiffrement(ciph_data_list, mode, key_len, word_len)
+            ciph_data_list = Util.organize_data_list(ciph_data, num_words)
+            clear_file_data, valeur_pad = Tf.threefish_dechiffrement(ciph_data_list, mode, key_len, word_len,
+                                                                     passwd_user, file_key)
             IO.write_file_list_pad(file_path, clear_file_data, word_len_bytes, valeur_pad)
             IO.rename_file(file_path, 1)
 
