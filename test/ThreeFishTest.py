@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from src.ThreeFish import *
+import src.IO as IO
 
 
 # test de la fonction permute
@@ -34,6 +35,15 @@ def test_inv_ECB():
     b = ecb_threefish_decipher(a, liste2keys)
     assert liste1 == b
 
+def test_inv_CBC():
+    key, userk = keygen(256)
+    all_keys = keygenturn(key)
+    data = IO.readfile("../test/resources/test.txt", 64, 1)
+    data_org = Util.organize_data_list(data, 4)
+    data_org_pad = Util.ajout_padding(data_org, 256, 64)
+    c = cbc_threefish_cipher(data_org_pad, all_keys, 256)
+    d = cbc_threefish_decipher(c, all_keys, 256)
+    assert d == data_org_pad
 
 def test_keygenturn():
     k, keyuser = keygen(256)
