@@ -25,7 +25,7 @@ def cipher_key(password, key):
     pass_hash = Hh.blake_hash(password, 64)
     formatted_hash = encode_int_list([pass_hash])
     turn_keys = Tf.keygenturn(formatted_hash)
-    formatted_key = format_key(key)
+    formatted_key = format_data(key)
     return Tf.ecb_threefish_cipher(formatted_key, turn_keys)
 
 
@@ -40,25 +40,25 @@ def decipher_key(password, ciphered_key):
     formatted_hash = encode_int_list([pass_hash])
     turn_keys = Tf.keygenturn(formatted_hash)
     formatted_key = Tf.ecb_threefish_decipher(ciphered_key, turn_keys)
-    return deformat_key(formatted_key)
+    return deformat_data(formatted_key)
 
 
-# Function that format a key into an organized list of 8 words of 64 bits
+# Function that format list of integers into an organized list of 8 words of strict 64 bits integers.
 # It serves to format a key before being ciphered with cbc
-def format_key(key):
-    formatted_key = encode_int_list(key)
-    formatted_key = organize_data_list(formatted_key, 8)
-    formatted_key = add_padding_v2(formatted_key, 8, 8)
-    return formatted_key
+def format_data(data):
+    formatted_data = encode_int_list(data)
+    formatted_data = organize_data_list(formatted_data, 8)
+    formatted_data = add_padding_v2(formatted_data, 8, 8)
+    return formatted_data
 
 
 # Function that reverses the formatting of a key
 # It serves to deformat a key before being deciphered with cbc
-def deformat_key(formatted_key):
-    key = remove_padding_listv2(formatted_key, 8, 8)
-    key = desorganize_datalistorder(key)
-    key = decode_int_list(key)
-    return key
+def deformat_data(formatted_data):
+    data = remove_padding_listv2(formatted_data, 8, 8)
+    data = desorganize_datalistorder(data)
+    data = decode_int_list(data)
+    return data
 
 
 # function that organise a list into a 2D list with a certain number of words.

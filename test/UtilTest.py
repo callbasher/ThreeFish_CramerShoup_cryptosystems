@@ -15,11 +15,11 @@ def test_encode_decode_int_list():
     assert t == tt
 
 
-def test_format_deformat_key():
-    key = [234345543543, 5676746745, 23432, 34543, 34345456576786534, 4565676554334]
-    fk = format_key(key)
-    kk = deformat_key(fk)
-    assert key == kk
+def test_format_deformat_data():
+    data = [234345543543, 5676746745, 23432, 34543, 34345456576786534, 4565676554334]
+    fk = format_data(data)
+    kk = deformat_data(fk)
+    assert data == kk
 
 
 def test_pad_bin():
@@ -33,7 +33,7 @@ def test_pad_bin_no_pad():
     assert a == pad_bin(a, 4)
 
 
-def test_ROTD_ROTG():
+def test_rotations():
     a = 12345678987654321
     rg = rotate_left(bin(a)[2:], 49)
     rd = rotate_right(bin(rg)[2:], 49)

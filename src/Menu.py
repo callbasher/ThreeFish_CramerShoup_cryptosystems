@@ -69,19 +69,24 @@ def apply(x):
             ans = input("Avez-vous une clé publique ?( y/n")
         if ans == 'y' or ans == 'Y':
             keypath = input("Entrer le chemin du fichier contenant la clé publique:")
-            Cs.encode_with_file(filepath, keypath)
+            ciph_data = Cs.encode_with_key(filepath, keypath)
         else:
             k = int(input("Entrez la taille de clé souhaitée en bits:"))
             password = input("Entrez un mot de passe pour générer vos clés. Il servira a chiffrer votre clé privée.")
             keypath = input("Entrez le chemin où stocker les clés")
-            Cs.encode_no_file(filepath, keypath, k, password)
+            ciph_data = Cs.encode_no_key(filepath, keypath, k, password)
+
+        IO.writefilelist(filepath, ciph_data, 8)
+        IO.rename_file(filepath, 0)
 
     elif x == 4:
         filepath = input("Entrer le chemin du fichier à déchiffrer:")
         keypath = input("Entrer le chemin du fichier contenant la clé privée:")
         password = input("Entrez le mot de passe de la clé privée:")
 
-        Cs.decode(filepath, keypath, password)
+        clear_data = Cs.decode(filepath, keypath, password)
+        IO.writefilelist(filepath, clear_data, 8)
+        IO.rename_file(filepath, 1)
 
     elif x == 5:
         print("todo")
