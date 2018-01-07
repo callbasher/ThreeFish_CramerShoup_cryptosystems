@@ -2,12 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from random import SystemRandom
-import src.Hash as Hh
-import src.Primes as Pm
-import src.Util as Util
-import src.ArithMod as Arithmod
-import src.Keys as Keys
-import src.Conversions as Conv
+from crypto_gs15 import Arithmod, Conversions, Hash, Keys, Primes, Util
 
 
 # The password is hashed to an int.
@@ -16,7 +11,7 @@ def encode_with_key(file_data, keypath):
     formatted_pb = Keys.read_key(keypath)
     public = Keys.deformat_key(formatted_pb)
     k = public[6]
-    clear_data = Conv.bytes2int_list(file_data, k >> 3)
+    clear_data = Conversions.bytes2int_list(file_data, k >> 3)
     ciph_data = cipher_data(clear_data, public)
     return ciph_data
 
@@ -28,7 +23,7 @@ def encode_no_key(file_data, keypath, k, password):
     Keys.write_key(keypath, "private_key.txt", private)
     Keys.write_key(keypath, "public_key.txt", formatted_pb)
 
-    clear_data = Conv.bytes2int_list(file_data, k >> 3)
+    clear_data = Conversions.bytes2int_list(file_data, k >> 3)
     ciph_data = cipher_data(clear_data, public)
     return ciph_data
 
@@ -38,7 +33,7 @@ def decode(ciph_data, keypath, password):
     private = Keys.decipher_key(password, private)
     k = private[6]
     clear_data = decipher_data(ciph_data, private)
-    file_data = Conv.int_list2bytes(clear_data, k >> 3)
+    file_data = Conversions.int_list2bytes(clear_data, k >> 3)
     return file_data
 
 
@@ -69,7 +64,7 @@ def cipher_bloc(bloc, key):
     B2 = pow(a2, b, p)
     c = (pow(W, b, p) * bloc) % p
     concat = (B1 + B2 + c) % p
-    h = Hh.blake_hash(str(concat), 64) % p
+    h = Hash.blake_hash(str(concat), 64) % p
     v = (pow(X, b, p) * pow(Y, b * h, p)) % p
 
     return B1, B2, c, v
@@ -81,7 +76,7 @@ def decipher_bloc(bloc, key):
 
     # 1 : Validate bloc
     concat = (B1 + B2 + c) % p
-    h = Hh.blake_hash(str(concat), 64) % p
+    h = Hash.blake_hash(str(concat), 64) % p
 
     # Method 1
     bx = (pow(B1, x1, p) * pow(B2, x2, p)) % p
@@ -94,7 +89,7 @@ def decipher_bloc(bloc, key):
 
 
 def generate_keys(k):
-    p, g1, g2 = Pm.prime_and_generators(k)
+    p, g1, g2 = Primes.prime_and_generators(k)
     rand = SystemRandom()
     x1 = rand.randint(2, p)
     x2 = rand.randint(2, p)

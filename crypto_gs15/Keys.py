@@ -1,9 +1,7 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
-import src.Hash as Hh
-import src.Util as Util
-from src import ThreeFish as Tf
+from crypto_gs15 import Hash, Util, ThreeFish
 
 
 # print key len and hexa key to the user
@@ -66,11 +64,11 @@ def hex2key(hexa):
 # Outputs:
 #   The key encoded with CBC and 512 bit blocks
 def cipher_key(password, key):
-    pass_hash = Hh.blake_hash(password, 64)
+    pass_hash = Hash.blake_hash(password, 64)
     formatted_hash = Util.encode_int_list([pass_hash])
-    turn_keys = Tf.keygenturn(formatted_hash)
+    turn_keys = ThreeFish.keygenturn(formatted_hash)
     formatted_key = format_key(key)
-    ciph_key = Tf.cbc_threefish_cipher(formatted_key, turn_keys, 512)
+    ciph_key = ThreeFish.cbc_threefish_cipher(formatted_key, turn_keys, 512)
     ciph_key = Util.desorganize_datalistorder(ciph_key)
     return format_key(ciph_key)
 
@@ -82,12 +80,12 @@ def cipher_key(password, key):
 # Outputs:
 #   The key decoded with CBC
 def decipher_key(password, ciphered_key):
-    pass_hash = Hh.blake_hash(password, 64)
+    pass_hash = Hash.blake_hash(password, 64)
     formatted_hash = Util.encode_int_list([pass_hash])
-    turn_keys = Tf.keygenturn(formatted_hash)
+    turn_keys = ThreeFish.keygenturn(formatted_hash)
     ciphered_key = deformat_key(ciphered_key)
     ciphered_key = Util.organize_data_list(ciphered_key, 8)
-    formatted_key = Tf.cbc_threefish_decipher(ciphered_key, turn_keys, 512)
+    formatted_key = ThreeFish.cbc_threefish_decipher(ciphered_key, turn_keys, 512)
     return deformat_key(formatted_key)
 
 

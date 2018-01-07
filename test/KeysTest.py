@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
-from src.Keys import *
+from crypto_gs15.Keys import *
 
 
 def test_key_to_hex():

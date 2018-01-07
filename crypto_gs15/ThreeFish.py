@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 
 from random import getrandbits
-from src import Util, IO, Conversions as Conv, ArithMod as Arithmod, Keys
+from crypto_gs15 import Arithmod, Conversions, Keys, IO, Util
 
 # Constants
-tweak0 = Conv.str2int("cogranne")
-tweak1 = Conv.str2int("gs15love")
+tweak0 = Conversions.str2int("cogranne")
+tweak1 = Conversions.str2int("gs15love")
 tweak2 = tweak0 ^ tweak1
 tweaks = [tweak0, tweak1, tweak2]
 C = 0x1bd11bdaa9fc1a22
@@ -141,13 +141,13 @@ def mixcolumn(datalist):
     # according to the block length we do 2, 4 or 8 times the mix
     datalistmix = []
     for i in range(0, len(datalist) - 1, 2):
-        m11 = Arithmod.add_64bits(Conv.int2bin_str(datalist[i]), Conv.int2bin_str(datalist[i + 1]))
-        m11 = Conv.bin_str2int(m11)
+        m11 = Arithmod.add_64bits(Conversions.int2bin_str(datalist[i]), Conversions.int2bin_str(datalist[i + 1]))
+        m11 = Conversions.bin_str2int(m11)
 
-        rotation = Util.rotate_right(Conv.int2bin_str(datalist[(i + 1)]), R)
+        rotation = Util.rotate_right(Conversions.int2bin_str(datalist[(i + 1)]), R)
 
-        m22 = Arithmod.xor_bin_str(Conv.int2bin_str(m11), Conv.int2bin_str(rotation))
-        m22 = Conv.bin_str2int(m22)
+        m22 = Arithmod.xor_bin_str(Conversions.int2bin_str(m11), Conversions.int2bin_str(rotation))
+        m22 = Conversions.bin_str2int(m22)
         datalistmix.append(m11)
         datalistmix.append(m22)
     return datalistmix
@@ -162,10 +162,10 @@ def inv_mixcolumn(datalist):
     # according to the block length we do 2, 4 or 8 times the mix
     datalist_unmix = []
     for i in range(0, len(datalist) - 1, 2):
-        xor = Arithmod.xor_bin_str(Conv.int2bin_str(datalist[i]), Conv.int2bin_str(datalist[(i + 1)]))
+        xor = Arithmod.xor_bin_str(Conversions.int2bin_str(datalist[i]), Conversions.int2bin_str(datalist[(i + 1)]))
         m2 = Util.rotate_left(xor, R)
-        m1 = Arithmod.subtract_64bits(Conv.int2bin_str(datalist[i]), Conv.int2bin_str(m2))
-        m1 = Conv.bin_str2int(m1)
+        m1 = Arithmod.subtract_64bits(Conversions.int2bin_str(datalist[i]), Conversions.int2bin_str(m2))
+        m1 = Conversions.bin_str2int(m1)
         datalist_unmix.append(m1)
         datalist_unmix.append(m2)
     return datalist_unmix

@@ -1,12 +1,7 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
-import src.IO as IO
-import src.Hash as Hh
-import src.Util as Util
-import src.ThreeFish as Tf
-import src.CramerShoup as Cs
-import src.Conversions as Conv
+from crypto_gs15 import Conversions, CramerShoup, Hash, IO, Util, ThreeFish
 
 
 def show():
@@ -45,7 +40,7 @@ def apply(x):
         if x == 1:
             file_data = IO.readfile(file_path, word_len, 1)
             file_data_list = Util.organize_data_list(file_data, num_words)
-            encrypted_file = Tf.threefish_chiffrement(file_data_list, mode, key_len, passwd_user, file_key)
+            encrypted_file = ThreeFish.threefish_chiffrement(file_data_list, mode, key_len, passwd_user, file_key)
             IO.write_2D_list(file_path, encrypted_file, word_len_bytes)
             IO.rename_file(file_path, 0)
 
@@ -54,7 +49,7 @@ def apply(x):
         elif x == 2:
             ciph_data = IO.readfile(file_path, word_len, 0)
             ciph_data_list = Util.organize_data_list(ciph_data, num_words)
-            clear_file_data, valeur_pad = Tf.threefish_dechiffrement(ciph_data_list, mode, key_len, word_len,
+            clear_file_data, valeur_pad = ThreeFish.threefish_dechiffrement(ciph_data_list, mode, key_len, word_len,
                                                                      passwd_user, file_key)
             IO.write_file_list_pad(file_path, clear_file_data, word_len_bytes, valeur_pad)
             IO.rename_file(file_path, 1)
@@ -69,14 +64,14 @@ def apply(x):
             ans = input("Avez-vous un fichier de clé publique ? (y/n) ")
         if ans == 'y' or ans == 'Y':
             keypath = input("Chemin de la clé publique: ")
-            ciph_data = Cs.encode_with_key(file_data, keypath)
+            ciph_data = CramerShoup.encode_with_key(file_data, keypath)
         else:
             k = int(input("Taille de clé souhaitée en bits: "))
             password = input("Mot de passe pour chiffrer la clé privée: ")
             keypath = input("Chemin du répertoire des clés: ")
-            ciph_data = Cs.encode_no_key(file_data, keypath, k, password)
+            ciph_data = CramerShoup.encode_no_key(file_data, keypath, k, password)
 
-        ciph_bytes = Conv.int_list2bytes(ciph_data, 8)
+        ciph_bytes = Conversions.int_list2bytes(ciph_data, 8)
         IO.write_bytes(filepath, ciph_bytes)
         IO.rename_file(filepath, 0)
 
@@ -88,8 +83,8 @@ def apply(x):
         keypath = input("Chemin de la clé privée: ")
         password = input("Mot de passe: ")
 
-        ciph_data = Conv.bytes2int_list(file_data, 8)
-        clear_data = Cs.decode(ciph_data, keypath, password)
+        ciph_data = Conversions.bytes2int_list(file_data, 8)
+        clear_data = CramerShoup.decode(ciph_data, keypath, password)
         IO.write_bytes(filepath, clear_data)
         IO.rename_file(filepath, 1)
 
@@ -116,14 +111,14 @@ def apply(x):
         if ans == 'y' or ans == 'Y':
             key = input("Mot de passe: ")
 
-        h = hex(Hh.blake_hash(file_data, hash_len, key)) + '\n'
+        h = hex(Hash.blake_hash(file_data, hash_len, key)) + '\n'
 
         # Rename file : "name.ext" -> "name~hash.ext"
         path = filepath.split('/')
-        l = len(path)
-        filename = path[l - 1].split('.')
+        last = len(path) - 1
+        filename = path[last].split('.')
         filename[0] += '~hash'
-        path[l - 1] = '.'.join(filename)
+        path[last] = '.'.join(filename)
         filepath = '/'.join(path)
 
         with open(filepath, 'w') as wfile:
@@ -154,7 +149,7 @@ def apply(x):
         if ans == 'y' or ans == 'Y':
             key = input("Mot de passe: ")
 
-        h = hex(Hh.blake_hash(file_data, hash_len, key)) + '\n'
+        h = hex(Hash.blake_hash(file_data, hash_len, key)) + '\n'
 
         if h == hash:
             print("Les empreintes sont égales.")

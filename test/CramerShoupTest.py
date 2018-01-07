@@ -1,8 +1,8 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
-from src.CramerShoup import *
-import src.IO as IO, src.Conversions as Conv
+from crypto_gs15.CramerShoup import *
+from crypto_gs15 import IO, Conversions as Conv
 
 private, public = generate_keys(128)
 

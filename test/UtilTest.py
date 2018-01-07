@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
-from src.Util import *
+from crypto_gs15.Util import *
 from random import getrandbits
 
 

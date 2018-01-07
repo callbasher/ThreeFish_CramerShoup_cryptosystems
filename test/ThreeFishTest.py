@@ -1,9 +1,8 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
-from src.ThreeFish import *
-import src.IO as IO
-import src.ArithMod as Ar
+from crypto_gs15.ThreeFish import *
+from crypto_gs15 import IO, Arithmod as Ar
 
 
 # test de la fonction permute

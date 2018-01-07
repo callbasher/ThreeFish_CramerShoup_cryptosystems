@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
-from src.Primes import *
+from crypto_gs15.Primes import *
 
 
 def test_find_generators():

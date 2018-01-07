@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
-from src.ArithMod import *
+from crypto_gs15.Arithmod import *
 
 
 def test_xor_bin_str():

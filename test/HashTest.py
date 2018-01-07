@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
-from src.Hash import *
+from crypto_gs15.Hash import *
 
 
 def test_mix():
@@ -28,8 +28,8 @@ def test_compress():
          0x1F83D9ABFB41BD6B,
          0x5BE0CD19137E2179]
 
-    chunk1 = Conv.str2bytes("test").zfill(128)
-    chunk2 = Conv.str2bytes("test").zfill(128)
+    chunk1 = Conversions.str2bytes("test").zfill(128)
+    chunk2 = Conversions.str2bytes("test").zfill(128)
 
     t = int(34).to_bytes(128, byteorder="little", signed=False)
     t2 = int(34).to_bytes(128, byteorder="little", signed=False)

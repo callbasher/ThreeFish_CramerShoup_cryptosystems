@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
-import src.Menu as Menu
+from crypto_gs15 import Menu
 
 
 def main():
