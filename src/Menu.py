@@ -5,20 +5,23 @@ import src.IO as IO
 import src.Util as Util
 import src.ThreeFish as Tf
 import src.CramerShoup as Cs
+import src.Conversions as Conv
+
 
 def show():
-    print("\nArnaud FOURNIER, Aurélien DIAS\n")
-    print("\t\t\tProjet GS15 - A17 - ThreeFish - CramerShoup")
+    print("\nArnaud FOURNIER, Aurélien DIAS\n\t\t\t"
+          "Projet GS15 - A17 - ThreeFish - CramerShoup")
+
+    display = "\nMenu:\n\t" \
+              "1. Chiffrement symétrique ThreeFish\n\t" \
+              "2. Déchiffrement sysmétrique ThreeFish\n\t" \
+              "3. Chiffrement de Cramer-Shoup\n\t" \
+              "4. Déchiffrement Cramer-Shoup\n\t" \
+              "5. Hashage d'un message\n\t" \
+              "6. Vérification d'un hash"
     x = -1
     while x < 0 or x > 6:
-        print("\nMenu :")
-        print("\t"
-            "1. Chiffrement symétrique ThreeFish\n\t"
-            "2. Déchiffrement sysmétrique ThreeFish\n\t"
-            "3. Chiffrement de Cramer-Shoup\n\t"
-            "4. Déchiffrement Cramer-Shoup\n\t"
-            "5. Hashage d'un message\n\t"
-            "6. Vérification d'un hash")
+        print(display)
         x = int(input("Option : "))
     return x
 
@@ -47,7 +50,7 @@ def apply(x):
             file_data = IO.readfile(file_path, word_len, 1)
             file_data_list = Util.organize_data_list(file_data, num_words)
             encrypted_file = Tf.threefish_chiffrement(file_data_list, mode, key_len, passwd_user, file_key)
-            IO.writefilelist(file_path, encrypted_file, word_len_bytes)
+            IO.write_2D_list(file_path, encrypted_file, word_len_bytes)
             IO.rename_file(file_path, 0)
 
             print("Chiffrement terminé.")
@@ -64,28 +67,32 @@ def apply(x):
 
     elif x == 3:
         filepath = input("Entrer le chemin du fichier à chiffrer:")
+        file_data = IO.read_bytes(filepath)
         ans = ''
         while ans != 'y' and ans != 'n' and ans != 'Y' and ans != 'N':
             ans = input("Avez-vous une clé publique ?( y/n")
         if ans == 'y' or ans == 'Y':
             keypath = input("Entrer le chemin du fichier contenant la clé publique:")
-            ciph_data = Cs.encode_with_key(filepath, keypath)
+            ciph_data = Cs.encode_with_key(file_data, keypath)
         else:
             k = int(input("Entrez la taille de clé souhaitée en bits:"))
             password = input("Entrez un mot de passe pour générer vos clés. Il servira a chiffrer votre clé privée.")
             keypath = input("Entrez le chemin où stocker les clés")
-            ciph_data = Cs.encode_no_key(filepath, keypath, k, password)
+            ciph_data = Cs.encode_no_key(file_data, keypath, k, password)
 
-        IO.writefilelist(filepath, ciph_data, 8)
+        ciph_bytes = Conv.int_list2bytes(ciph_data, 8)
+        IO.write_bytes(filepath, ciph_bytes)
         IO.rename_file(filepath, 0)
 
     elif x == 4:
         filepath = input("Entrer le chemin du fichier à déchiffrer:")
+        file_data = IO.read_bytes(filepath)
         keypath = input("Entrer le chemin du fichier contenant la clé privée:")
         password = input("Entrez le mot de passe de la clé privée:")
 
-        clear_data = Cs.decode(filepath, keypath, password)
-        IO.writefilelist(filepath, clear_data, 8)
+        ciph_data = Conv.bytes2int_list(file_data, 8)
+        clear_data = Cs.decode(ciph_data, keypath, password)
+        IO.write_bytes(filepath, clear_data)
         IO.rename_file(filepath, 1)
 
     elif x == 5:

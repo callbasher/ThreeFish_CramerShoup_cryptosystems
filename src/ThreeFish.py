@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from random import getrandbits
-from src import Util, IO, Conversions as Conv, ArithMod as Arithmod
+from src import Util, IO, Conversions as Conv, ArithMod as Arithmod, Keys
 
 # Constants
 tweak0 = Conv.str2int("cogranne")
@@ -11,6 +11,7 @@ tweak2 = tweak0 ^ tweak1
 tweaks = [tweak0, tweak1, tweak2]
 C = 0x1bd11bdaa9fc1a22
 R = 49
+
 
 # Is apply when the user chose the option 1 in the menu which is correspond to ThreeFish cipher
 # input :
@@ -22,11 +23,11 @@ def threefish_chiffrement(file_data_list, mode, key_len, passwd_user, file_key):
     key, keyuser = keygen(key_len)
     tab_key = keygenturn(key)
     # cipher the key using the password given by the user
-    cipher_key = Util.cipher_key(passwd_user, key)
+    cipher_key = Keys.cipher_key(passwd_user, key)
     # writing cipher key in the specific file
-    IO.writefilelist(file_key, cipher_key, 8)
+    IO.write_2D_list(file_key, cipher_key, 8)
 
-    Util.print_key(key_len, keyuser)
+    Keys.print_key(key_len, keyuser)
 
     padded_file = Util.ajout_padding(file_data_list, key_len, 64)
 
@@ -49,7 +50,7 @@ def threefish_dechiffrement(ciph_data_list, mode, key_len, bloc_len, passwd_user
     cipher_key_desorganize = IO.readfile(file_key, 64, 0)
     # organize the data
     formatted_key = Util.organize_data_list(cipher_key_desorganize, 8)
-    key = Util.decipher_key(passwd_user, formatted_key)
+    key = Keys.decipher_key(passwd_user, formatted_key)
     tab_key = keygenturn(key)
 
     if mode == 1:

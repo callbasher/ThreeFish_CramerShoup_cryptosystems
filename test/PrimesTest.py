@@ -5,7 +5,7 @@ from src.Primes import *
 
 
 def test_find_generators():
-    p = probable_prime(20, 1000)
+    p = probable_prime(10, 1000)
     factors = factorize(p-1)
 
     a1 = find_generator(p, factors)

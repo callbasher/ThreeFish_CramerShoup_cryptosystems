@@ -3,6 +3,7 @@
 
 from random import SystemRandom
 
+
 # Retrieve primes from the file containing all the primes until lower than 100 000
 def get_primes():
     primes_100k = []
@@ -156,13 +157,10 @@ def find_generator(p, factors):
             exp = (p - 1) // f[0]
             b = pow(x, exp, p)
             if b != 1:
-                print("success = x: {0}, f: {1}, b: {2}".format(x, f, b))
                 success = True
 
-        e = (p - 1) // pow(f[0], f[1], p)
-        print("e = {0}".format(e))
+        e = (p - 1) // pow(f[0], f[1])
         c = pow(x, e, p)
-        print("c = {0}".format(c))
         g = (g * c) % p
     return g
 
@@ -184,9 +182,9 @@ def prime_and_generators(k):
     alpha1 = find_generator(p, factors)
 
     rand = SystemRandom()
-    co_prime = primes[rand.randint(0, len(primes)-1)]
+    co_prime = primes[rand.randint(0, len(primes))]
     while (co_prime in factors) or (co_prime >= p-1):
-        co_prime = primes[rand.randint(0, len(primes) - 1)]
+        co_prime = primes[rand.randint(0, len(primes))]
 
     alpha2 = pow(alpha1, co_prime, p)
 

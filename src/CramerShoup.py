@@ -3,70 +3,60 @@
 
 from random import SystemRandom
 import src.Hash as Hh
-import src.IO as IO
 import src.Primes as Pm
 import src.Util as Util
 import src.ArithMod as Arithmod
 import src.Keys as Keys
+import src.Conversions as Conv
 
 
 # The password is hashed to an int.
 # This int correspond to the line in which the encrypted keys will be in the password file.
-# TODO : enable to cipher with an already-existing public key (retrieve the private with the password)
-def encode_with_key(filepath, keypath):
-    public = Keys.read_key(keypath)
-    p = public[0]
-    k = len(bin(p)[2:])
-
-    clear_data = IO.readfile(filepath, k, 0)
+def encode_with_key(file_data, keypath):
+    formatted_pb = Keys.read_key(keypath)
+    public = Keys.deformat_key(formatted_pb)
+    k = public[6]
+    clear_data = Conv.bytes2int_list(file_data, k >> 3)
     ciph_data = cipher_data(clear_data, public)
-
     return ciph_data
 
 
-def encode_no_key(filepath, keypath, k, password):
+def encode_no_key(file_data, keypath, k, password):
     private, public = generate_keys(k)
-    private = Util.cipher_key(password, private)
-    public = Util.format_data(public)
-
+    private = Keys.cipher_key(password, private)
+    formatted_pb = Keys.format_key(public)
     Keys.write_key(keypath, "private_key.txt", private)
-    Keys.write_key(keypath, "public_key.txt", public)
+    Keys.write_key(keypath, "public_key.txt", formatted_pb)
 
-    clear_data = IO.readfile(filepath, k, 0)
+    clear_data = Conv.bytes2int_list(file_data, k >> 3)
     ciph_data = cipher_data(clear_data, public)
-
     return ciph_data
 
 
-def decode(filepath, keypath, password):
+def decode(ciph_data, keypath, password):
     private = Keys.read_key(keypath)
-    private = Util.decipher_key(password, private)
-    p = private[0]
-    k = len(bin(p)[2:])
-
-    ciph_data = IO.readfile(filepath, k, 0)
+    private = Keys.decipher_key(password, private)
+    k = private[6]
     clear_data = decipher_data(ciph_data, private)
+    file_data = Conv.int_list2bytes(clear_data, k >> 3)
+    return file_data
 
-    return clear_data
 
-
-def cipher_data(clear_data, public):
-    ciph_data = []
-    for bloc in clear_data:
-        ciph_bloc = cipher_bloc(bloc, public)
-        ciph_data.extend(ciph_bloc)
-
-    return Util.format_data(ciph_data)
+def cipher_data(bloc_list, public):
+    ciph_blocs = []
+    for bloc in bloc_list:
+        ciph_blocs.extend(cipher_bloc(bloc, public))
+    ciph_data = Util.encode_int_list(ciph_blocs)
+    return ciph_data
 
 
 def decipher_data(ciph_data, private):
-    ciph_data = Util.deformat_data(ciph_data)
-    ciph_blocs = Util.organize_data_list(ciph_data, 4)
-    clear_data = []
+    ciph_blocs = Util.decode_int_list(ciph_data)
+    ciph_blocs = Util.organize_data_list(ciph_blocs, 4)
+    bloc_list = []
     for b in ciph_blocs:
-        clear_data.append(decipher_bloc(private, b))
-
-    return clear_data
+        bloc_list.append(decipher_bloc(b, private))
+    return bloc_list
 
 
 # The block is supposed to be an int.
@@ -80,8 +70,7 @@ def cipher_bloc(bloc, key):
     c = (pow(W, b, p) * bloc) % p
     concat = (B1 + B2 + c) % p
     h = Hh.blake_hash(str(concat), 64) % p
-    exp = (b * h) % p
-    v = (pow(X, b, p) * pow(Y, exp, p)) % p
+    v = (pow(X, b, p) * pow(Y, b * h, p)) % p
 
     return B1, B2, c, v
 
@@ -99,19 +88,9 @@ def decipher_bloc(bloc, key):
     by = (pow(B1, y1, p) * pow(B2, y2, p)) % p
     vv = (bx * pow(by, h, p)) % p
 
-    # Method 2
-    exp1 = (x1 + h * y2) % p
-    exp2 = (x2 + h * y2) % p
-    vv2 = (pow(B1, exp1, p) * pow(B2, exp2, p)) % p
-
-    print(v)
-    print(vv)
-    print(vv2)
-
     # Compute res only if bloc is validated.
     if vv == v:
-        clear = (Arithmod.inv(pow(B1, w, p), p) * c) % p
-        return clear
+        return (Arithmod.inv(pow(B1, w, p), p) * c) % p
 
 
 def generate_keys(k):
@@ -127,7 +106,6 @@ def generate_keys(k):
     Y = (pow(g1, y1, p) * pow(g2, y2, p)) % p
     W = pow(g1, w, p)
 
-    private_key = [p, x1, x2, y1, y2, w]
-    public_key = [p, g1, g2, X, Y, W]
-
+    private_key = [p, x1, x2, y1, y2, w, k]
+    public_key = [p, g1, g2, X, Y, W, k]
     return private_key, public_key

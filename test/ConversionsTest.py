@@ -25,11 +25,4 @@ def test_int2byte():
         output1.append(i)
     p = "".join(output1)
     p = str(p)
-    assert p == int2str(a)
-
-
-def test_int_list2hexa():
-    l = [15, 33, 21, 12, 5]
-    expected = 'Oxf1f15c5'
-
-    assert expected == int_list2hexa(l)
+    assert p == int2bin_str(a)
