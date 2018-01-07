@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from random import SystemRandom
-from crypto_gs15 import Arithmod, Conversions, Hash, Keys, Primes, Util
+import Arithmod, Conversions, Hash, Keys, Primes, Util
 
 
 # The password is hashed to an int.

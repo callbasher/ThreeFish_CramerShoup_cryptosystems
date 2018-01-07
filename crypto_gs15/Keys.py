@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
-from crypto_gs15 import Hash, Util, ThreeFish
+import Hash, Util, ThreeFish
 
 
 # print key len and hexa key to the user

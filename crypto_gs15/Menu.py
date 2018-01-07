@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
-from crypto_gs15 import Conversions, CramerShoup, Hash, IO, Util, ThreeFish
+import Conversions, CramerShoup, Hash, IO, Util, ThreeFish
 
 
 def show():

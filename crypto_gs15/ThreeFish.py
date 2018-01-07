@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from random import getrandbits
-from crypto_gs15 import Arithmod, Conversions, Keys, IO, Util
+import Arithmod, Conversions, Keys, IO, Util
 
 # Constants
 tweak0 = Conversions.str2int("cogranne")

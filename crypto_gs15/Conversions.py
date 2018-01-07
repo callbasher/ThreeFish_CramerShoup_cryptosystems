@@ -68,12 +68,11 @@ def bytes2int_list(to_convert, byte_len):
 
     return int_list
 
-# function that convert a list of int value into an byte value, do the reverse of the function bytes2int_list
+# function that convert a list of int value into an byte value
 # input :
-#   to_convert = a list of int that represent a byte value
-#   byte_len = the length of the byte
+#   to_convert =
 # output :
-#   bytes = byte value
+#   bytes = byte
 def int_list2bytes(to_convert, byte_len):
     bytes = b''
     last = len(to_convert) - 1
