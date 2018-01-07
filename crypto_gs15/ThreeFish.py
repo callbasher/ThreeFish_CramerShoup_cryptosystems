@@ -16,9 +16,9 @@ R = 49
 # Is apply when the user chose the option 1 in the menu which is correspond to ThreeFish cipher
 # input :
 #   file_data_list = 2D array of int
-#   mode = int
-#   key_len = int
-# output = tab of list of int
+#   mode = int, permit to choose between ecb or cbc decipher
+#   key_len = int, length of the key, 256, 512 or 1024
+# output = 2D array of int, correspond to the cipher data
 def threefish_chiffrement(file_data_list, mode, key_len, passwd_user, file_key):
     key, keyuser = keygen(key_len)
     tab_key = keygenturn(key)
@@ -39,12 +39,12 @@ def threefish_chiffrement(file_data_list, mode, key_len, passwd_user, file_key):
 
 # Is apply when the user chose the option 2 in the menu which is correspond to ThreeFish decipher
 # ciph_data_list = 2D array of int
-#   mode = int
-#   key_len = int
-#   bloc_len = int
+#   mode = int, permit to choose between ecb or cbc decipher
+#   key_len = int, length of the key, 256, 512 or 1024
+#   bloc_len = int, length of the reading bloc, for threefish it is 8 bytes
 # output :
-#   file_data = 2D array of int
-#   valeur_pad = int
+#   file_data = 2D array of int, that correspond to decipher data
+#   valeur_pad = int value that wil permit to remove padding data
 def threefish_dechiffrement(ciph_data_list, mode, key_len, bloc_len, passwd_user, file_key):
     # reading the file where the key is
     cipher_key_desorganize = IO.readfile(file_key, 64, 0)
@@ -95,9 +95,9 @@ def keygen(key_len):
 
 # Generate 20 keys based on the random key generate with the function keygen
 # input :
-#   key = list of int
+#   key = list of int generate in the function keygen()
 # output :
-#   keys = 2D array of int
+#   keys = 2D array of int, correspond to the 20 keys that are use in ecb or cbc cipher and decipher
 def keygenturn(key):
     n = len(key) - 1
     mod = 2**64
@@ -175,17 +175,17 @@ def inv_mixcolumn(datalist):
 # input :
 #   n = list of int
 # output :
-#   n = list of int
+#   n = list of int permute
 def permute(n):
     return list(reversed(n))
 
 
 # Do 76 tours for cipher data (use in ecb_threefish_cipher and in cbc_threefish_cipher)
 # input :
-#   data_list = list of int
-#   tabkeys = list of int
+#   data_list = list of int, correspond to a data that will be cipher
+#   tabkeys = list of int, , correspond to a key generated
 # output :
-#   data_list = list of int
+#   data_list = list of int, correspond to a cipher data
 def cipher_tour(data_list, tabkeys):
     for k in range(0, 19):
         data_list = Arithmod.add_list_64bits(data_list, tabkeys[k])
@@ -197,10 +197,10 @@ def cipher_tour(data_list, tabkeys):
 
 # Do 76 tours for decipher data (use in ecb_threefish_decipher and in cbc_threefish_decipher)
 # input :
-#   data_list = list of int
-#   tabkeys = list of int
+#   data_list = list of int, correspond to cipher data
+#   tabkeys = list of int, correspond to a key generated
 # output :
-#   data_list = list of int
+#   data_list = list of int, correspond to decipher data
 def decipher_tour(data_list, tabkeys):
     counter = 18
     for k in range(0, 19):
@@ -214,10 +214,10 @@ def decipher_tour(data_list, tabkeys):
 
 # Do ECB threefish cipher
 # input :
-#   datalist = 2D array of int
-#   tabkeys = 2D array of int
+#   datalist = 2D array of int, data that will be cipher
+#   tabkeys = 2D array of int, correspond to the 20 keys generated
 # output :
-#   encrypt_list = 2D array of int
+#   encrypt_list = 2D array of int, cipher data
 def ecb_threefish_cipher(datalist, tabkeys):
     encryp_list = []
     for j in datalist:
@@ -229,10 +229,10 @@ def ecb_threefish_cipher(datalist, tabkeys):
 
 # Do ECB threefish decipher
 # input :
-#   datalist = 2D array of int
-#   tabkeys = 2D array of int
+#   datalist = 2D array of int, correspond to the cipher data
+#   tabkeys = 2D array of int, correspond to the 20 keys generated
 # output :
-#   decrypt_list = 2D array of int
+#   decrypt_list = 2D array of int, decipher data
 def ecb_threefish_decipher(datalist, tabkeys):
     decrypt_list = []
     for j in datalist:
@@ -244,11 +244,11 @@ def ecb_threefish_decipher(datalist, tabkeys):
 
 # Do CBC threefish cipher
 # input :
-#   datalist = 2D array of int
-#   tabkeys = 2D array of int
-#   bloc_len = int
+#   datalist = 2D array of int, data that will be cipher
+#   tabkeys = 2D array of int, correspond to the 20 keys generated
+#   bloc_len = int, permit to have the iv
 # output :
-#   encrypt_list = 2D array of int
+#   encrypt_list = 2D array of int, correspond to cipher data
 def cbc_threefish_cipher(datalist, tabkeys, bloc_len):
     iv = init(bloc_len)
     encryp_list = []
@@ -270,11 +270,11 @@ def cbc_threefish_cipher(datalist, tabkeys, bloc_len):
 
 # Do CBC threefish decipher
 # input :
-#   datalist = 2D array of int
-#   tabkeys = 2D array of int
-#   bloc_len = int
+#   datalist = 2D array of int, correpond to cipher data
+#   tabkeys = 2D array of int, correspond to the 20 keys generated
+#   bloc_len = int, this permit to have the iv
 # output :
-#   decrypt_list = tab of list of int
+#   decrypt_list = tab of list of int, decipher data
 def cbc_threefish_decipher(datalist, tabkeys, bloc_len):
     iv = init(bloc_len)
     decrypt_list = []
@@ -293,7 +293,7 @@ def cbc_threefish_decipher(datalist, tabkeys, bloc_len):
 # input :
 #   key_len = int (256, 512 or 1024)
 # output :
-#   IV_* = list of int
+#   IV_* = list of int that correspond to an iv for CBC (de)cipher
 def init(key_len):
     iv_256 = [11939804896947846136, 4219065746052997657, 14289511192216538576, 6129295191351922843]
     iv_512 = [14021392340165679391, 10713825714517858312, 16678454614520143940, 2176821685655837471,

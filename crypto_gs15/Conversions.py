@@ -30,8 +30,8 @@ def int2bin_str(to_convert):
 
 # convert a str value into an int value
 # input :
-#   to_convert = str
-# output = int
+#   to_convert = str value
+# output = int value
 def str2int(to_convert):
     b = to_convert.encode('utf-8')
     return int(binascii.hexlify(b), 16)
@@ -39,21 +39,26 @@ def str2int(to_convert):
 
 # convert a str value into a byte value
 # input :
-#   to_convert = str
-# output = byte
+#   to_convert = str value
+# output = byte value
 def str2bytes(to_convert=""):
     return to_convert.encode('utf-8')
 
 
 # function that convert a str value into an int value
 # input :
-#   to_convert = str
+#   to_convert = str value that is a bin value without 0b
 # output :
-#   int(to_convert, 2) = int
+#   int(to_convert, 2) = int value
 def bin_str2int(to_convert):
     return int(to_convert, 2)
 
-
+# function that convert a byte value into an int_list value
+# input :
+#   to_convert = byte value
+#   byte_len = int that represent length of the byte value in byte
+# output :
+#   int_list = a list of int that represent the byte input in int
 def bytes2int_list(to_convert, byte_len):
     int_list = []
     for i in range(0, len(to_convert), byte_len):
@@ -63,7 +68,12 @@ def bytes2int_list(to_convert, byte_len):
 
     return int_list
 
-
+# function that convert a list of int value into an byte value, do the reverse of the function bytes2int_list
+# input :
+#   to_convert = a list of int that represent a byte value
+#   byte_len = the length of the byte
+# output :
+#   bytes = byte value
 def int_list2bytes(to_convert, byte_len):
     bytes = b''
     last = len(to_convert) - 1

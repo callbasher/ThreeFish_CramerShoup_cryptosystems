@@ -31,9 +31,9 @@ def rename_file(path_fichier, option_remove_encrypt_extension):
 # input :
 #   fichier = str
 #   bloc_len = int (256, 512 or 1024)
-#   has_padding = boolean
+#   has_padding = boolean, permit to choose between do pading or not when we read a file
 # output :
-#   datalist = list
+#   datalist = list, data in the file
 def readfile(file, word_len, has_padding):
     file_size = os.stat(file).st_size
     word_len_bytes = int(word_len / 8)
@@ -67,6 +67,11 @@ def readfile(file, word_len, has_padding):
     return datalist
 
 
+# function that read a file in read binary mode
+# input :
+#   file = str
+# output :
+#   data = bytes
 def read_bytes(file):
     with open(file, "rb") as rfile:
         data = rfile.read()
