@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import src.IO as IO
+import src.Hash as Hh
 import src.Util as Util
 import src.ThreeFish as Tf
 import src.CramerShoup as Cs
@@ -30,18 +31,13 @@ def apply(x):
     if x < 3:
         mode = 0
         while mode != 1 and mode != 2:
-            mode = int(input("Veuillez choisir votre mode de (dé)chiffrement : \n\t1. ECB\n\t2. CBC"))
-
+            mode = int(input("Mode de (dé)chiffrement : \n\t1. ECB\n\t2. CBC\n"))
         key_len = 0
         while (key_len != 256) and (key_len != 512) and (key_len != 1024):
-            key_len = int(input("Choisir la taille de clé à utiliser pour le (dé)chiffrement (256/512/1024) : "))
-
-        file_key = input("Choisir un fichier pour stocker / lire votre clé : ")
-
-        passwd_user = input("Choisir un mot de passe pour (dé)chiffrer votre clé : ")
-
-        file_path = input("Veuillez entrer le chemin du fichier à (dé)chiffrer : ")
-
+            key_len = int(input("Taille de la clé en bits(256/512/1024): "))
+        file_key = input("Chemin du fichier de la clé: ")
+        passwd_user = input("Mot de passe pour chiffrer la clé: ")
+        file_path = input("Chemin du fichier à (dé)chiffrer : ")
         word_len = 64
         num_words = int(key_len / word_len)
         word_len_bytes = int(word_len / 8)
@@ -66,37 +62,101 @@ def apply(x):
             print("Déchiffrement terminé.")
 
     elif x == 3:
-        filepath = input("Entrer le chemin du fichier à chiffrer:")
+        filepath = input("Chemin du fichier à chiffrer:")
         file_data = IO.read_bytes(filepath)
         ans = ''
         while ans != 'y' and ans != 'n' and ans != 'Y' and ans != 'N':
-            ans = input("Avez-vous une clé publique ?( y/n")
+            ans = input("Avez-vous un fichier de clé publique ? (y/n) ")
         if ans == 'y' or ans == 'Y':
-            keypath = input("Entrer le chemin du fichier contenant la clé publique:")
+            keypath = input("Chemin de la clé publique: ")
             ciph_data = Cs.encode_with_key(file_data, keypath)
         else:
-            k = int(input("Entrez la taille de clé souhaitée en bits:"))
-            password = input("Entrez un mot de passe pour générer vos clés. Il servira a chiffrer votre clé privée.")
-            keypath = input("Entrez le chemin où stocker les clés")
+            k = int(input("Taille de clé souhaitée en bits: "))
+            password = input("Mot de passe pour chiffrer la clé privée: ")
+            keypath = input("Chemin du répertoire des clés: ")
             ciph_data = Cs.encode_no_key(file_data, keypath, k, password)
 
         ciph_bytes = Conv.int_list2bytes(ciph_data, 8)
         IO.write_bytes(filepath, ciph_bytes)
         IO.rename_file(filepath, 0)
 
+        print("Chiffrement terminé.")
+
     elif x == 4:
-        filepath = input("Entrer le chemin du fichier à déchiffrer:")
+        filepath = input("Chemin du fichier à déchiffrer: ")
         file_data = IO.read_bytes(filepath)
-        keypath = input("Entrer le chemin du fichier contenant la clé privée:")
-        password = input("Entrez le mot de passe de la clé privée:")
+        keypath = input("Chemin de la clé privée: ")
+        password = input("Mot de passe: ")
 
         ciph_data = Conv.bytes2int_list(file_data, 8)
         clear_data = Cs.decode(ciph_data, keypath, password)
         IO.write_bytes(filepath, clear_data)
         IO.rename_file(filepath, 1)
 
+        print("Déchiffrement terminé.")
+
     elif x == 5:
-        print("todo")
+        hash_len = 0
+        while hash_len != 256 and hash_len != 512 and hash_len != 1 and hash_len != 2:
+            hash_len = int(input("1. BLAKE-256\n2. BLAKE-512\n"))
+        if hash_len < 256:
+            hash_len *= 32
+        else:
+            hash_len //= 8
+
+        filepath = input("Chemin du fichier: ")
+        with open(filepath, 'r') as rfile:
+            file_data = rfile.read()
+
+        ans = ''
+        while ans != 'y' and ans != 'n' and ans != 'Y' and ans != 'N':
+            ans = input("Protéger l'empreinte ? (y/n) ")
+
+        key = ''
+        if ans == 'y' or ans == 'Y':
+            key = input("Mot de passe: ")
+
+        h = hex(Hh.blake_hash(file_data, hash_len, key)) + '\n'
+
+        # Rename file : "name.ext" -> "name~hash.ext"
+        path = filepath.split('/')
+        l = len(path)
+        filename = path[l - 1].split('.')
+        filename[0] += '~hash'
+        path[l - 1] = '.'.join(filename)
+        filepath = '/'.join(path)
+
+        with open(filepath, 'w') as wfile:
+            wfile.write(h)
 
     elif x == 6:
-        print("todo")
+        hash_len = 0
+        while hash_len != 256 and hash_len != 512 and hash_len != 1 and hash_len != 2:
+            hash_len = int(input("1. BLAKE-256\n2. BLAKE-512\n"))
+        if hash_len < 256:
+            hash_len *= 32
+        else:
+            hash_len //= 8
+
+        filepath = input("Chemin du fichier: ")
+        with open(filepath, 'r') as rfile:
+            file_data = rfile.read()
+
+        hashpath = input("Chemin du hash: ")
+        with open(hashpath, 'r') as hfile:
+            hash = hfile.read()
+
+        ans = ''
+        while ans != 'y' and ans != 'n' and ans != 'Y' and ans != 'N':
+            ans = input("Empreinte protégée ?(y/n) ")
+
+        key = ''
+        if ans == 'y' or ans == 'Y':
+            key = input("Mot de passe: ")
+
+        h = hex(Hh.blake_hash(file_data, hash_len, key)) + '\n'
+
+        if h == hash:
+            print("Les empreintes sont égales.")
+        else:
+            print("Les empreintes ne correspondent pas.")
