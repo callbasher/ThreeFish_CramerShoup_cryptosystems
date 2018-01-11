@@ -2,14 +2,14 @@
 A project implemennting ThreeFish and CramerShoup encryption methods that can be applied to files
 
 
-Arnaud FOURNIER, Aurélien DIAS
-			Projet GS15 - A17 - ThreeFish - CramerShoup
+Arnaud FOURNIER, AurÃ©lien DIAS
+	Projet GS15 - A17 - ThreeFish - CramerShoup
 
 Menu:
-	1. Chiffrement symétrique ThreeFish
-	2. Déchiffrement sysmétrique ThreeFish
+	1. Chiffrement symÃ©trique ThreeFish
+	2. DÃ©chiffrement sysmÃ©trique ThreeFish
 	3. Chiffrement de Cramer-Shoup
-	4. Déchiffrement Cramer-Shoup
+	4. DÃ©chiffrement Cramer-Shoup
 	5. Hashage d'un message
-	6. Vérification d'un hash
+	6. VÃ©rification d'un hash
 Option :
