@@ -1,9 +1,8 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
-from src.ThreeFish import *
-import src.IO as IO
-import src.ArithMod as Ar
+from crypto_gs15.ThreeFish import *
+from crypto_gs15 import IO, Arithmod as Ar
 
 
 # test de la fonction permute
@@ -74,3 +73,8 @@ def test_ecb():
     d = ecb_threefish_decipher(c, turn_keys)
 
     assert a == d
+
+def test_iv_function():
+    iv_256 = [11939804896947846136, 4219065746052997657, 14289511192216538576, 6129295191351922843]
+    return_iv = init(256)
+    assert iv_256 == return_iv

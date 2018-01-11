@@ -1,28 +1,41 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
-from src.Conversions import *
+from crypto_gs15.Conversions import *
 
 
-# Todo : Why are you testing your function bu just redoing the same ???
-# You should init an input and its corresponding dsiered output directly
-# like : in = 31, expected_out = "1F"
-# return expected_out == int2byte_array(in)
-def test_int2byte():
-    a = 6869182828364843105
-    b = 6869182828364843105
-    output = []
-    output1 = []
-    intByte = 8
-    mask = 0xFF
+def test_int2bin_str():
+    a = 7579627748166259002
+    b = "0110100100110000001111110100011101000011001001001101000100111010"
+    result = int2bin_str(a)
+    assert result == b
 
-    for i in range(0, intByte):
-        output.insert(0, a & mask)
-        a >>= 8
+def test_str2int():
+    a = "toto"
+    b = 1953461359
+    result = str2int(a)
+    assert result == b
 
-    for i in output:
-        i = bin(i)[2:].zfill(8)
-        output1.append(i)
-    p = "".join(output1)
-    p = str(p)
-    assert p == int2str(a)
+def test_str2byte():
+    a = "toto"
+    b = b'toto'
+    result = str2bytes(a)
+    assert b == result
+
+def test_bin_str2int():
+    a = "0110100100110000001111110100011101000011001001001101000100111010"
+    b = 7579627748166259002
+    result = bin_str2int(a)
+    assert result == b
+
+def test_bytes2int_list():
+    a = b'toot'
+    b = [1953460084]
+    result = bytes2int_list(a, 4)
+    assert b == result
+
+def test_int_list2bytes():
+    a = [1953460084]
+    b = b'toot'
+    result = int_list2bytes(a, 4)
+    assert b == result

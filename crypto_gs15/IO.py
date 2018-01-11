@@ -31,48 +31,59 @@ def rename_file(path_fichier, option_remove_encrypt_extension):
 # input :
 #   fichier = str
 #   bloc_len = int (256, 512 or 1024)
-#   has_padding = boolean
+#   has_padding = boolean, permit to choose between do pading or not when we read a file
 # output :
-#   datalist = list
-def readfile(fichier, bloc_len, has_padding):
-    taille_fich = os.stat(fichier).st_size
-    bloc_bytes_len = int(bloc_len / 8)
-    n_bloc_nopad = int(taille_fich / bloc_bytes_len)
-    last_bloc_len = taille_fich - bloc_bytes_len * n_bloc_nopad
-    last_bloc_pos = int(bloc_bytes_len * n_bloc_nopad)
+#   datalist = list, data in the file
+def readfile(file, word_len, has_padding):
+    file_size = os.stat(file).st_size
+    word_len_bytes = int(word_len / 8)
+    n_bloc_nopad = int(file_size / word_len_bytes)
+    last_word_len = file_size - word_len_bytes * n_bloc_nopad
+    last_bloc_pos = int(word_len_bytes * n_bloc_nopad)
     datalist = []
 
-    for i in range(0, (taille_fich - last_bloc_len), bloc_bytes_len):
-        with open(fichier, 'rb') as rfile:
+    for i in range(0, (file_size - last_word_len), word_len_bytes):
+        with open(file, 'rb') as rfile:
             rfile.seek(i)
-            data = rfile.read(bloc_bytes_len)
+            data = rfile.read(word_len_bytes)
             data = int.from_bytes(data, byteorder='little', signed=False)
             datalist.append(data)
 
     # do padding if the file length / L_block_bytes != int
-    if last_bloc_len != 0:
-        with open(fichier, 'rb') as rfile:
+    if last_word_len != 0:
+        with open(file, 'rb') as rfile:
             rfile.seek(last_bloc_pos)
-            data = rfile.read(last_bloc_len)
-            nbr_byte_pad = bloc_bytes_len - len(data)
+            data = rfile.read(last_word_len)
+            nbr_byte_pad = word_len_bytes - len(data)
             # add padding data in byte in the end of the block to inform how much padding byte has been add
             data = (nbr_byte_pad - 1) * b'0' + data + bytes([nbr_byte_pad])
             data = int.from_bytes(data, byteorder='little', signed=False)
             datalist.append(data)
     elif has_padding == 1:
-        pad_last_byte = bytes([bloc_bytes_len])
-        data_pad = b'0' * (bloc_bytes_len - 1) + pad_last_byte
+        pad_last_byte = bytes([word_len_bytes])
+        data_pad = b'0' * (word_len_bytes - 1) + pad_last_byte
         data_pad = int.from_bytes(data_pad, byteorder='little', signed=False)
         datalist.append(data_pad)
     return datalist
+
+
+# function that read a file in read binary mode
+# input :
+#   file = str
+# output :
+#   data = bytes
+def read_bytes(file):
+    with open(file, "rb") as rfile:
+        data = rfile.read()
+    return data
 
 
 # Write str data in a file
 # input :
 #   fichier = str
 #   data = str
-def writefile(fichier, data):
-    with open(fichier, 'w') as wfile:
+def write_bytes(filepath, data):
+    with open(filepath, 'wb') as wfile:
         wfile.write(data)
 
 
@@ -82,7 +93,20 @@ def writefile(fichier, data):
 #   fichier = str
 #   data = tab of list
 #   bloc_byte_len = int
-def writefilelist(fichier, data, bloc_byte_len):
+def write_list(filepath, data, bloc_byte_len):
+    with open(filepath, 'wb') as wfile:
+        for i in data:
+            b = i.to_bytes(bloc_byte_len, byteorder='little', signed=False)
+            wfile.write(b)
+
+
+# Write a 2D array of int data into a file
+# the int data are convert into binary data and write them in the file
+# input :
+#   fichier = str
+#   data = tab of list
+#   bloc_byte_len = int
+def write_2D_list(fichier, data, bloc_byte_len):
     with open(fichier, 'wb') as wfile:
         for i in data:
             for j in i:

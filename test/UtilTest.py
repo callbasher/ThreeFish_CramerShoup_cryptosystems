@@ -1,10 +1,8 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
-
-from src.Util import *
+from crypto_gs15.Util import *
 from random import getrandbits
-import src.ThreeFish as Tf
 
 
 def test_encode_decode_int_list():
@@ -16,11 +14,20 @@ def test_encode_decode_int_list():
     assert t == tt
 
 
-def test_format_deformat_key():
-    key = [234345543543, 5676746745, 23432, 34543, 34345456576786534, 4565676554334]
-    fk = format_key(key)
-    kk = deformat_key(fk)
-    assert key == kk
+def test_add_padding():
+    d = [[334446546576571321, 34545657685446, 345454213456, 56544334567]]
+    pad_data = add_padding_v2(d, 8, 64)
+    print(d)
+    dd = remove_padding_listv2(pad_data, 8, 64)
+    print(dd)
+    assert d == dd
+
+
+def test_ajout_pad():
+    d = [[334446546576571321, 34545657685446, 345454213456, 56544334567]]
+    pad_data = ajout_padding(d, 256, 64)
+    dd = remove_padding_list(pad_data, 256, 64)
+    assert d == dd
 
 
 def test_pad_bin():
@@ -34,15 +41,9 @@ def test_pad_bin_no_pad():
     assert a == pad_bin(a, 4)
 
 
-def test_ROTD_ROTG():
+def test_rotations():
     a = 12345678987654321
     rg = rotate_left(bin(a)[2:], 49)
     rd = rotate_right(bin(rg)[2:], 49)
     assert a == rd
 
-
-def test_decipher_key():
-    key, keyuser = Tf.keygen(256)
-    c = cipher_key("pass", key)
-    d = decipher_key("pass", c)
-    assert key == d

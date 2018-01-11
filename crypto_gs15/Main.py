@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
-import src.Menu as Menu
+import Menu
 
 
 def main():
@@ -15,4 +15,4 @@ if __name__ == "__main__":
         main()
         x = 'z'
         while x != 'y' and x != 'Y' and x != 'n' and x != 'N':
-            x = input("Recommencer ? (y/n)")
+            x = input("Recommencer ? (y/n) ")

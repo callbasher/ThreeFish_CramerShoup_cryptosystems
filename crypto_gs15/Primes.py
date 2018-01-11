@@ -3,6 +3,7 @@
 
 from random import SystemRandom
 
+
 # Retrieve primes from the file containing all the primes until lower than 100 000
 def get_primes():
     primes_100k = []
@@ -31,13 +32,16 @@ def factorize(n):
     factors = []
     i = 2
     while i <= n / i:
+        e = 0
         while n % i == 0:
-            factors.append(i)
+            e += 1
             n /= i
+        if e > 0:
+            factors.append([i, e])
         i += 1
 
     if n > 1:
-        factors.append(int(n))
+        factors.append([int(n), 1])
     return factors
 
 
@@ -109,7 +113,7 @@ def probable_prime(k, b=1000):
         while divisible:
             # We force the first and last bits to be set to 1
             # Thus we can ensure to have an odd number on k bits
-            n = int('1' + rand.getrandbits(k-2) + '1', 2)
+            n = int('1' + bin(rand.getrandbits(k-2))[2:] + '1', 2)
             divisible = trial_division(n, b)
 
         if rabin_miller(n):
@@ -139,3 +143,50 @@ def safe_prime(k):
                 break
 
     return p, q, r
+
+
+# algorithm found here : http://www.imm.org.pl/imm/plik/pliki-do-pobrania-bpasts-2015-0112_nn399.pdf
+def find_generator(p, factors):
+    g = 1
+    rand = SystemRandom()
+    for f in factors:
+        success = False
+        x = 0
+        while not success:
+            x = rand.randint(2, p - 1)
+            exp = (p - 1) // f[0]
+            b = pow(x, exp, p)
+            if b != 1:
+                success = True
+
+        e = (p - 1) // pow(f[0], f[1])
+        c = pow(x, e, p)
+        g = (g * c) % p
+    return g
+
+
+# algorithm found here: http://cacr.uwaterloo.ca/hac/about/chap4.pdf p.164, 4.86
+def prime_and_generators(k):
+    p, q, r = safe_prime(k)
+    # prime factors of p-1
+    # we want only the different prime factors not their exponent so we remove duplicates
+    # We put q at the end of the list to ensure that smaller factors are tried first
+    # in "find_generator" function
+    factors = factorize(r)
+    factors.append([q, 1])
+    if factors[0][0] == 2:
+        factors[0][1] += 1
+    else:
+        factors.append([2, 1])
+
+    alpha1 = find_generator(p, factors)
+
+    rand = SystemRandom()
+    co_prime = primes[rand.randint(0, len(primes))]
+    while (co_prime in factors) or (co_prime >= p-1):
+        co_prime = primes[rand.randint(0, len(primes))]
+
+    alpha2 = pow(alpha1, co_prime, p)
+
+    return p, alpha1, alpha2
+

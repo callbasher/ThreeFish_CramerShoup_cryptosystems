@@ -2,63 +2,6 @@
 # -*- coding: utf-8 -*-
 
 from random import getrandbits
-from src import Hash as Hh, ThreeFish as Tf
-
-
-# print key len and hexa key to the user
-# key_len = int
-# key = hexa string
-def print_key(key_len, key):
-    print("Voici votre clé symétrique sur ", key_len, "bits :",
-          "\t\n######################################\t\n",
-          key,
-          "\t\n######################################")
-
-
-# Function that cipher a key with CBC method
-# Inputs:
-#   password = string that will serve as key in the cipher
-#   key = a list of ints to cipher with cbc
-# Outputs:
-#   The key encoded with CBC and 512 bit blocks
-def cipher_key(password, key):
-    pass_hash = Hh.blake_hash(password, 64)
-    formatted_hash = encode_int_list([pass_hash])
-    turn_keys = Tf.keygenturn(formatted_hash)
-    formatted_key = format_key(key)
-    return Tf.ecb_threefish_cipher(formatted_key, turn_keys)
-
-
-# Function that decipher a key with CBC method
-# Inputs:
-#   password = string that will serve as key in the cipher
-#   key = a 2D tab of ints to decipher with cbc
-# Outputs:
-#   The key decoded with CBC
-def decipher_key(password, ciphered_key):
-    pass_hash = Hh.blake_hash(password, 64)
-    formatted_hash = encode_int_list([pass_hash])
-    turn_keys = Tf.keygenturn(formatted_hash)
-    formatted_key = Tf.ecb_threefish_decipher(ciphered_key, turn_keys)
-    return deformat_key(formatted_key)
-
-
-# Function that format a key into an organized list of 8 words of 64 bits
-# It serves to format a key before being ciphered with cbc
-def format_key(key):
-    formatted_key = encode_int_list(key)
-    formatted_key = organize_data_list(formatted_key, 8)
-    formatted_key = add_padding_v2(formatted_key, 8, 8)
-    return formatted_key
-
-
-# Function that reverses the formatting of a key
-# It serves to deformat a key before being deciphered with cbc
-def deformat_key(formatted_key):
-    key = remove_padding_listv2(formatted_key, 8, 8)
-    key = desorganize_datalistorder(key)
-    key = decode_int_list(key)
-    return key
 
 
 # function that organise a list into a 2D list with a certain number of words.
@@ -95,10 +38,11 @@ def desorganize_datalistorder(datalistorder):
 # Inputs:
 #   datalistorder = 2D array of integers.
 #   num_word = number of words wanted in each row of the array
-#   len_word = size of the words in bytes
+#   len_word = but length of words
 # Outputs:
 #   datalistorder = a padded 2D array
-def add_padding_v2(datalistorder, num_word, len_word):
+def add_padding_v2(data_list, num_word, len_word):
+    datalistorder = data_list.copy()
     last_list = datalistorder[len(datalistorder) - 1]
     num_to_pad = num_word - len(last_list)
 
@@ -107,16 +51,15 @@ def add_padding_v2(datalistorder, num_word, len_word):
     if num_to_pad == 0:
         num_to_pad = num_word
     else:
-        pad_list = last_list
+        pad_list = last_list.copy()
         datalistorder.remove(last_list)
 
     for i in range(1, num_to_pad):
-        pad_list.append(getrandbits(len_word << 3))
-    last_word = getrandbits((len_word-1) << 3).to_bytes(len_word-1, byteorder='little', signed=False)
-    last_word += bytes([num_to_pad])
-    pad_list.append(int.from_bytes(last_word, byteorder='little', signed=False))
+        new_word = '1' + pad_bin(bin(getrandbits(len_word - 1))[2:], len_word - 1)
+        pad_list.append(int(new_word, 2))
+    last_word = '1' + pad_bin(bin(num_to_pad)[2:], len_word - 9) + pad_bin(bin(num_to_pad)[2:], 8)
+    pad_list.append(int(last_word, 2))
     datalistorder.append(pad_list)
-
     return datalistorder
 
 
@@ -131,8 +74,8 @@ def remove_padding_listv2(data, num_words, word_len):
     # last list of the tab contains the padding
     last_list = data[len(data) - 1]
     last_elem = last_list[num_words - 1]
-    last_elem_bytes = last_elem.to_bytes(word_len, byteorder='little', signed=False)
-    num_pad_words = last_elem_bytes[word_len - 1]
+    last_elem_bin = bin(last_elem)[2:]
+    num_pad_words = int(last_elem_bin[word_len-8:word_len], 2)
     if num_pad_words == num_words:
         del data[len(data) - 1]
     else:

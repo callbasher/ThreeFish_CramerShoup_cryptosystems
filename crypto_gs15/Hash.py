@@ -1,8 +1,7 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
-from src import Util
-import src.Conversions as Conv
+import Conversions, Util
 
 sigma = [(0,   1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15),
          (14, 10,  4,  8,  9, 15, 13,  6,  1, 12,  0,  2, 11,  7,  5,  3),
@@ -31,8 +30,8 @@ def blake_hash(m, hash_len, key=""):
     if hash_len > 64:
         raise ValueError("Blake hash does not support hash_length greater than 512 bits.")
 
-    m = Conv.str2bytes(m)
-    key = Conv.str2bytes(key)
+    m = Conversions.str2bytes(m)
+    key = Conversions.str2bytes(key)
 
     m_len = len(m)
     key_len = len(key)
